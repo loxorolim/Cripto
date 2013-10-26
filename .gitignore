@@ -1,0 +1,10 @@
+*.suo
+
+*.sdf
+
+/TrabalhoCriptografia/ipch
+/TrabalhoCriptografia/Debug
+/TrabalhoCriptografia/Release
+
+/TrabalhoCriptografia/TrabalhoCriptografia/Debug
+/TrabalhoCriptografia/TrabalhoCriptografia/Release
