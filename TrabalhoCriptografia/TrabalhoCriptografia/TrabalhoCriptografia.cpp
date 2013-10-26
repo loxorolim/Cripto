@@ -136,6 +136,12 @@ void shiftRowsTest(){
 	}
 }
 
+void addRoundKey(byte *state, int startingIndex, byte *subkey){
+	int i;
+	for (i = 0; i < 16; i++)
+		state[startingIndex + i] = state[startingIndex + i] ^ subkey[i];
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	shiftRowsTest();
