@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef unsigned char byte;
+
 const unsigned char sbox[] = 
    // 0     1     2     3     4     5     6     7     8     9     A     B     C     D     E     F
    {0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76, //0
@@ -92,14 +94,52 @@ unsigned char gmul(unsigned char a, unsigned char b) {
         //}
         //return p;
 }
-unsigned char* mixColumns(unsigned char* val)
+unsigned char* mixColumns()
 {
+	return NULL;
+}
 
+void subBytes(byte *bytes, int count){
+	int i;
+	for (i = 0; i < count; i++)
+		bytes[i] = sbox[i];
+}
+
+void shiftRows(byte* matrix, int startingIndex){
+	int i, j;
+	byte temp[16];
+
+	for (i = 0; i < 4; i++){
+		for (j = 0; j < 4; j++){
+			int newJ = (j + i) % 4;
+			temp[4 * i + j] = matrix[startingIndex + 4 * i + newJ];
+		}
+	}
+
+	memcpy(matrix + startingIndex, temp, 16);
+}
+
+void shiftRowsTest(){
+	byte mat[] = { 
+		0xd4, 0xe0, 0xb8, 0x1e,
+		0x27, 0xbf, 0xb4, 0x41,
+		0x11, 0x98, 0x5d, 0x52,
+		0xae, 0xf1, 0xe5, 0x30
+	};
+	shiftRows(mat, 4);
+	int i, j;
+	for (i = 0; i < 4; i++){
+		for (j = 0; j < 4; j++){
+			printf("%x ", mat[i * 4 + j]);
+		}
+		printf("\n");
+	}
 }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	unsigned char n1 = gmul(0xd4,0x02);
+	shiftRowsTest();
+	/*unsigned char n1 = gmul(0xd4,0x02);
 	unsigned char n2 = gmul(0xbf,0x03);
 	unsigned char n3 = gmul(0x5d,0x01);
 	unsigned char n4 = gmul(0x30,0x01);
@@ -128,8 +168,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	n4 = gmul(0x30,0x02);
 	n5 = n1^n2^n3^n4;
 	printf("%x\n",n5);
-
-	system("pause");
+	*/
 
 
 	return 0;
