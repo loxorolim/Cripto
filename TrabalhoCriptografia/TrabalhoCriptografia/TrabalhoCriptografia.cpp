@@ -5,6 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define EBC 1
+#define CBC 0
+
 typedef unsigned char byte;
 
 const byte sbox[] =
@@ -207,7 +210,9 @@ void addRoundKeyTest(){
 	printMatrix(mat, 0);
 }
 
-void makeRoundKey(int roundCount, byte **allKeys){
+void makeRoundKey(int roundCount, byte **allKeys)
+{
+
 	byte *lastKey = allKeys[roundCount - 1];
 	byte *currentKey = allKeys[roundCount];
 
@@ -230,7 +235,15 @@ void makeRoundKey(int roundCount, byte **allKeys){
 		}
 	}
 }
+void makeAllRoundKeys(int roundCount, byte **allKeys, byte *firstKey)
+{
+	memcpy(allKeys[0],firstKey,16);
 
+	for(int i = 0 ; i < roundCount ; i ++)
+	{
+		makeRoundKey(i+1,allKeys);
+	}
+}
 void testGenerateRoundKeys(){
 	byte originalKey[] = {
 		0x2b, 0x28, 0xab, 0x09,
@@ -245,7 +258,7 @@ void testGenerateRoundKeys(){
 		allKeys[i] = (byte*)calloc(16, sizeof(byte));
 
 	for (i = 1; i < 4; i++){
-		makeRoundKey(i, allKeys);
+	//	makeAllRoundKeys(i, allKeys);
 		printf("\nRound %d:\n", i);
 		printMatrix(allKeys[i], 0);
 		
@@ -273,13 +286,144 @@ void testMixColumns(){
 			printf("\n");
 	}
 }
+void xor(byte * a, byte * b,byte * result)
+{
+	for(int i = 0 ; i < 16 ;i ++)
+	{
+		result[i] = a[i]^b[i];
+	}
+}
+void doInitRound(byte * data,byte * result,byte* key,byte* toXor)
+{
+	if(toXor != NULL)			
+		xor(data,toXor,result);	
+	else	
+		memcpy(result,data,16*sizeof(byte));
+	
+	addRoundKey(result,0,key);
+	printMatrix(result,0);
+	printf("Fim do init round");
 
+	
+}
+void doRounds(byte * src, byte * dst,int rounds, byte ** allKeys)
+{
+	for(int i = 1; i < rounds ; i++)
+	{
+		printf("%d\n",i);
+		subBytes(src,16);
+		printf("\nSUB BYTES\n");
+		printMatrix(src,0);
+		shiftRows(src,0);
+		printf("\nSHIFT ROWS\n");
+		printMatrix(src,0);
+		mixColumns(src,0);
+		printf("\nMIX COLUMNS\n");
+		printMatrix(src,0);
+
+		addRoundKey(src,0,allKeys[i]);
+		printf("\nADD ROUND KEY \n");
+		printMatrix(dst,0);
+	}
+	
+}
+void doFinalRound(byte * src, byte * dst,int rounds, byte ** allKeys)
+{
+		printf("\nFINALRU ROUUNDUUUU!\n");
+
+		subBytes(src,16);
+		printf("\nSUB BYTES\n");
+		printMatrix(src,0);
+		shiftRows(src,0);
+		printf("\nSHIFT ROWS\n");
+		printMatrix(src,0);
+		addRoundKey(src,0,allKeys[rounds]);
+		printf("\nADD ROUND KEYS\n");
+		printMatrix(src,0);
+}
+void doAES(byte* data,byte** allKeys,int rounds,byte** toXor, byte* result,int type)
+{
+
+	doInitRound(data,result,allKeys[0],*toXor);
+
+	if(type == CBC) // SE CBC
+	{
+		*toXor = result;
+	}
+	doRounds(result,result,rounds,allKeys);
+	doFinalRound(result,result,rounds,allKeys);
+}
+void startAES( byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv)
+{
+
+	byte **allKeys = (byte**)calloc(rounds+1,sizeof(byte*));
+	for (int i = 0; i < rounds+1; i++)
+		allKeys[i] = (byte*)calloc(16, sizeof(byte));
+	makeAllRoundKeys(rounds,allKeys,key);
+
+	byte* toXor = NULL;
+	if(type == EBC) //EBC
+	{
+		
+		
+	}
+	if(type == CBC) //CBC
+	{
+		toXor = iv;
+	}
+
+	for(int i = 0; i < dataSize/16 ; i++)
+	{
+		doAES(data + i*16,allKeys,rounds,&toXor,result+i*16,type);
+		
+		
+
+	}
+	for(int i = 0; i < rounds+1 ; i++)
+	{
+		free(allKeys[i]);
+
+	}
+	free(allKeys);
+}
+void matrixTransposer(byte* data)
+{
+	for(int i = 0; i < 4 ;i++)
+	{
+		for(int j = 0; j < i ;j++)
+		{
+			byte aux = data[i*4+j];
+			data[i*4+j] = data[j*4+i];
+			data[j*4+i] = aux;
+		}
+	}
+}
+void testeBolado()
+{
+	byte originalKey[] = {
+		0x2b, 0x28, 0xab, 0x09,
+		0x7e, 0xae, 0xf7, 0xcf,
+		0x15, 0xd2, 0x15, 0x4f,
+		0x16, 0xa6, 0x88, 0x3c
+	};
+
+	byte inputData[16] = {0x32,0x88,0x31,0xe0,0x43,0x5a,0x31,0x37,0xf6,0x30,0x98,0x07,0xa8,0x8d,0xa2,0x34};
+	byte result[16] ;
+	//matrixTransposer(inputData);
+	//matrixTransposer(originalKey);
+	startAES(inputData,16,originalKey,result,10,CBC,NULL);
+
+	//printMatrix(inputData,0);
+
+	//printMatrix(result,0);
+}
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//shiftRowsTest();
 	//addRoundKeyTest();
 	//testMixColumns();
-	testGenerateRoundKeys();
+	//testGenerateRoundKeys();
+	testeBolado();
 	system("pause");
 
 	return 0;
