@@ -94,9 +94,52 @@ unsigned char gmul(unsigned char a, unsigned char b) {
         //}
         //return p;
 }
-unsigned char* mixColumns()
+void mixColumns(unsigned char* val,int index)
 {
-	return NULL;
+	unsigned char n1 = 0; 
+	unsigned char n2 = 0; 
+	unsigned char n3 = 0; 
+	unsigned char n4 = 0; 
+	unsigned char n5[] = {0,0,0,0,
+						0,0,0,0,
+						0,0,0,0,
+						0,0,0,0};
+
+
+	for(int i = 0; i < 4 ;i++)
+	{
+
+			n1 = gmul(*(val+i+0+index),0x02);
+			n2 = gmul(*(val+i+4+index),0x03);
+			n3 = gmul(*(val+i+8+index),0x01);
+			n4 = gmul(*(val+i+12+index),0x01);
+			
+			n5[0+i] = n1^n2^n3^n4;
+
+			n1 = gmul(*(val+i+0+index),0x01);
+			n2 = gmul(*(val+i+4+index),0x02);
+			n3 = gmul(*(val+i+8+index),0x03);
+			n4 = gmul(*(val+i+12+index),0x01);
+			
+			n5[4+i] = n1^n2^n3^n4;
+		
+
+			n1 = gmul(*(val+i+0+index),0x01);
+			n2 = gmul(*(val+i+4+index),0x01);
+			n3 = gmul(*(val+i+8+index),0x02);
+			n4 = gmul(*(val+i+12+index),0x03);
+			
+			n5[8+i] = n1^n2^n3^n4;
+		
+
+			n1 = gmul(*(val+i+0+index),0x03);
+			n2 = gmul(*(val+i+4+index),0x01);
+			n3 = gmul(*(val+i+8+index),0x01);
+			n4 = gmul(*(val+i+12+index),0x02);
+			
+			n5[12+i] = n1^n2^n3^n4;
+	}
+	memcpy(val+index,n5,sizeof(unsigned char)*16);
 }
 
 void subBytes(byte *bytes, int count){
@@ -166,8 +209,25 @@ void addRoundKeyTest(){
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	unsigned char teste[] = {0xd4,0xe0,0xb8,0x1e,0xbf,0xb4,0x41,0x27,0x5d,0x52,0x11,0x98,0x30,0xae,0xf1,0xe5}; 
+	for(int i = 0 ;i<16;i++)
+	{
+		printf("%x ",*(teste+i));
+		if(i%4 == 3)
+		printf("\n");
+	}
+	mixColumns(teste,0);
+	for(int i = 0 ;i<16;i++)
+	{
+		printf("%x ",*(teste+i));
+		if(i%4 == 3)
+		printf("\n");
+	}
+
+	system("pause");
+
 	//shiftRowsTest();
-	addRoundKeyTest();
+	//addRoundKeyTest();
 	/*unsigned char n1 = gmul(0xd4,0x02);
 	unsigned char n2 = gmul(0xbf,0x03);
 	unsigned char n3 = gmul(0x5d,0x01);
