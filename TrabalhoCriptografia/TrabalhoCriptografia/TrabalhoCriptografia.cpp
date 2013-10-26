@@ -145,7 +145,7 @@ void mixColumns(unsigned char* val,int index)
 void subBytes(byte *bytes, int count){
 	int i;
 	for (i = 0; i < count; i++)
-		bytes[i] = sbox[i];
+		bytes[i] = sbox[bytes[i]];
 }
 
 void printMatrix(byte *matrix, int startingIndex){
@@ -207,58 +207,80 @@ void addRoundKeyTest(){
 	printMatrix(mat, 0);
 }
 
+void makeRoundKey(int roundCount, byte **allKeys){
+	byte *lastKey = allKeys[roundCount - 1];
+	byte *currentKey = allKeys[roundCount];
+
+	byte lastColumn[4];
+	int i, j;
+	for (j = 0; j < 4; j++){
+		if (j == 0){
+			byte oldColumn[] = { lastKey[3], lastKey[7], lastKey[11], lastKey[15] };
+			byte rotatedColumn[] = { oldColumn[1], oldColumn[2], oldColumn[3], oldColumn[0] };
+			subBytes(rotatedColumn, 4);
+
+			for (int i = 0; i < 4; i++){
+				byte rconValue = i == 0 ? rcon[roundCount] : 0;
+				lastColumn[i] = currentKey[i * 4 + j] = lastKey[i * 4 + j] ^ rotatedColumn[i] ^ rconValue;
+			}
+		}
+		else {
+			for (int i = 0; i < 4; i++)
+				lastColumn[i] = currentKey[i * 4 + j] = lastKey[i * 4 + j] ^ lastColumn[i];
+		}
+	}
+}
+
+void testGenerateRoundKeys(){
+	byte originalKey[] = {
+		0x2b, 0x28, 0xab, 0x09,
+		0x7e, 0xae, 0xf7, 0xcf,
+		0x15, 0xd2, 0x15, 0x4f,
+		0x16, 0xa6, 0x88, 0x3c
+	};
+	byte *allKeys[4];
+	allKeys[0] = originalKey;
+	int i;
+	for (i = 1; i < 4; i++)
+		allKeys[i] = (byte*)calloc(16, sizeof(byte));
+
+	for (i = 1; i < 4; i++){
+		makeRoundKey(i, allKeys);
+		printf("\nRound %d:\n", i);
+		printMatrix(allKeys[i], 0);
+		
+	}
+
+
+
+	for (i = 1; i < 4; i++)
+		free(allKeys[i]);
+}
+
+void testMixColumns(){
+	unsigned char teste[] = { 0xd4, 0xe0, 0xb8, 0x1e, 0xbf, 0xb4, 0x41, 0x27, 0x5d, 0x52, 0x11, 0x98, 0x30, 0xae, 0xf1, 0xe5 };
+	for (int i = 0; i<16; i++)
+	{
+		printf("%x ", *(teste + i));
+		if (i % 4 == 3)
+			printf("\n");
+	}
+	mixColumns(teste, 0);
+	for (int i = 0; i<16; i++)
+	{
+		printf("%x ", *(teste + i));
+		if (i % 4 == 3)
+			printf("\n");
+	}
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
-	unsigned char teste[] = {0xd4,0xe0,0xb8,0x1e,0xbf,0xb4,0x41,0x27,0x5d,0x52,0x11,0x98,0x30,0xae,0xf1,0xe5}; 
-	for(int i = 0 ;i<16;i++)
-	{
-		printf("%x ",*(teste+i));
-		if(i%4 == 3)
-		printf("\n");
-	}
-	mixColumns(teste,0);
-	for(int i = 0 ;i<16;i++)
-	{
-		printf("%x ",*(teste+i));
-		if(i%4 == 3)
-		printf("\n");
-	}
-
-	system("pause");
-
 	//shiftRowsTest();
 	//addRoundKeyTest();
-	/*unsigned char n1 = gmul(0xd4,0x02);
-	unsigned char n2 = gmul(0xbf,0x03);
-	unsigned char n3 = gmul(0x5d,0x01);
-	unsigned char n4 = gmul(0x30,0x01);
-	unsigned char n5 = n1^n2^n3^n4;
-	
-	printf("%x\n",n5);
-
-	n1 = gmul(0xd4,0x01);
-	n2 = gmul(0xbf,0x02);
-	n3 = gmul(0x5d,0x03);
-	n4 = gmul(0x30,0x01);
-	n5 = n1^n2^n3^n4;
-
-	printf("%x\n",n5);
-
-	n1 = gmul(0xd4,0x01);
-	n2 = gmul(0xbf,0x01);
-	n3 = gmul(0x5d,0x02);
-	n4 = gmul(0x30,0x03);
-	n5 = n1^n2^n3^n4;
-	printf("%x\n",n5);
-
-	n1 = gmul(0xd4,0x03);
-	n2 = gmul(0xbf,0x01);
-	n3 = gmul(0x5d,0x01);
-	n4 = gmul(0x30,0x02);
-	n5 = n1^n2^n3^n4;
-	printf("%x\n",n5);
-	*/
-
+	//testMixColumns();
+	testGenerateRoundKeys();
+	system("pause");
 
 	return 0;
 }
