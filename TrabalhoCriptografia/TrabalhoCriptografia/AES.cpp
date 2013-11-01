@@ -434,3 +434,19 @@ long calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize)
 	}
 	return dist;
 }
+byte* byteStuffer(byte * b, int size, int* newSize)
+{
+	int toStuff = size % 16;
+	byte *newBytes = (byte*)calloc(size + toStuff, sizeof(byte*));
+	memcpy(newBytes,b,size*sizeof(byte));
+	if(toStuff != 0)
+	{
+		for(int i = 1; i <= toStuff;i++)
+		{
+			newBytes[size+i] = 0;
+		}
+	}
+	*newSize =  size + toStuff;
+	return newBytes;
+
+}
