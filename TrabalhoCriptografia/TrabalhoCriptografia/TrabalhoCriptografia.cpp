@@ -16,7 +16,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	//testeBoladoEBC(ENCRYPT);
 	//inverseShiftRowsTest();
 	//testeBoladoEBC(DECRYPT);
-	testInverseMixColumns();
+	testeBoladoEBCDecrypt();
+	//inverseSubBytesTest();
+	//testInverseMixColumns();
 	//byte b1[] = {85};
 	//byte b2[] = {17};
 	//printf("%d", calculateHammingDistance(b1,b2,1));
