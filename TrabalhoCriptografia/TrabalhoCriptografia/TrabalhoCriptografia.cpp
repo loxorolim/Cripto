@@ -4,13 +4,18 @@
 #include "Tests.h"
 #include <stdlib.h>
 
+#define ENCRYPT 1
+#define DECRYPT 0
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//shiftRowsTest();
 	//addRoundKeyTest();
 	//testMixColumns();
-	//testGenerateRoundKeys();
-	testeBoladoEBC();
+	//testGen/erateRoundKeys();
+	//testeBoladoEBC(ENCRYPT);
+
+	testeBoladoEBC(DECRYPT);
 	//byte b1[] = {85};
 	//byte b2[] = {17};
 	//printf("%d", calculateHammingDistance(b1,b2,1));

@@ -138,11 +138,63 @@ void mixColumns(unsigned char* val, int index)
 	}
 	memcpy(val + index, n5, sizeof(unsigned char)* 16);
 }
+void inverseMixColumns(unsigned char* val, int index)
+{
+	unsigned char n1 = 0;
+	unsigned char n2 = 0;
+	unsigned char n3 = 0;
+	unsigned char n4 = 0;
+	unsigned char n5[] = { 0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0 };
+
+
+	for (int i = 0; i < 4; i++)
+	{
+
+		n1 = gmul(*(val + i + 0 + index), 0x14);
+		n2 = gmul(*(val + i + 4 + index), 0x11);
+		n3 = gmul(*(val + i + 8 + index), 0x13);
+		n4 = gmul(*(val + i + 12 + index), 0x09);
+
+		n5[0 + i] = n1^n2^n3^n4;
+
+		n1 = gmul(*(val + i + 0 + index), 0x09);
+		n2 = gmul(*(val + i + 4 + index), 0x14);
+		n3 = gmul(*(val + i + 8 + index), 0x11);
+		n4 = gmul(*(val + i + 12 + index), 0x13);
+
+		n5[4 + i] = n1^n2^n3^n4;
+
+
+		n1 = gmul(*(val + i + 0 + index), 0x13);
+		n2 = gmul(*(val + i + 4 + index), 0x09);
+		n3 = gmul(*(val + i + 8 + index), 0x14);
+		n4 = gmul(*(val + i + 12 + index), 0x11);
+
+		n5[8 + i] = n1^n2^n3^n4;
+
+
+		n1 = gmul(*(val + i + 0 + index), 0x11);
+		n2 = gmul(*(val + i + 4 + index), 0x13);
+		n3 = gmul(*(val + i + 8 + index), 0x09);
+		n4 = gmul(*(val + i + 12 + index), 0x14);
+
+		n5[12 + i] = n1^n2^n3^n4;
+	}
+	memcpy(val + index, n5, sizeof(unsigned char)* 16);
+}
 
 void subBytes(byte *bytes, int count){
 	int i;
 	for (i = 0; i < count; i++)
 		bytes[i] = sbox[bytes[i]];
+}
+void inverseSubBytes(byte *bytes, int count){
+	int i;
+	for (i = 0; i < count; i++)
+		bytes[i] = sbox_inverse[bytes[i]];
 }
 
 void printMatrix(byte *matrix){
@@ -153,6 +205,21 @@ void printMatrix(byte *matrix){
 		}
 		printf("\n");
 	}
+}
+void inverseShiftRows(byte* matrix, int startingIndex){
+	int i, j;
+	byte temp[16];
+
+	for (i = 0; i < 4; i++){
+		for (j = 0; j < 4; j++){
+			int newJ = (j - i) % 4;
+			if(newJ<1)
+				newJ+=4;
+			temp[4 * i + j] = matrix[startingIndex + 4 * i + newJ];
+		}
+	}
+
+	memcpy(matrix + startingIndex, temp, 16);
 }
 
 void shiftRows(byte* matrix, int startingIndex){
@@ -231,50 +298,84 @@ void doInitRound(byte * data, byte * result, byte* key, byte* toXor)
 	printf("Fim do init round");
 }
 
-void doRounds(byte * src, byte * dst, int rounds, byte ** allKeys)
+void doRounds(byte * src, byte * dst, int rounds, byte ** allKeys,int mode)
 {
 	for (int i = 1; i < rounds; i++)
 	{
-		printf("%d\n", i);
+		if(mode == ENCRYPT)
+		{
+			printf("%d\n", i);
+			subBytes(src, 16);
+			printf("\nSUB BYTES\n");
+			printMatrix(src);
+			shiftRows(src, 0);
+			printf("\nSHIFT ROWS\n");
+			printMatrix(src);
+			mixColumns(src, 0);
+			printf("\nMIX COLUMNS\n");
+			printMatrix(src);
+
+			addRoundKey(src, 0, allKeys[i]);
+			printf("\nADD ROUND KEY \n");
+			printMatrix(dst);
+		}
+		else
+		{
+			printf("%d\n", i);
+			inverseSubBytes(src, 16);
+			printf("\nSUB BYTES\n");
+			printMatrix(src);
+			inverseShiftRows(src, 0);
+			printf("\nSHIFT ROWS\n");
+			printMatrix(src);
+			inverseMixColumns(src, 0);
+			printf("\nMIX COLUMNS\n");
+			printMatrix(src);
+
+			addRoundKey(src, 0, allKeys[i]);
+			printf("\nADD ROUND KEY \n");
+			printMatrix(dst);
+		}
+	}
+}
+
+void doFinalRound(byte * src, byte * dst, int rounds, byte ** allKeys,int mode)
+{
+	printf("\nFINALRU ROUUNDUUUU!\n");
+	if(mode == ENCRYPT)
+	{
 		subBytes(src, 16);
 		printf("\nSUB BYTES\n");
 		printMatrix(src);
 		shiftRows(src, 0);
 		printf("\nSHIFT ROWS\n");
 		printMatrix(src);
-		mixColumns(src, 0);
-		printf("\nMIX COLUMNS\n");
+		addRoundKey(src, 0, allKeys[rounds]);
+		printf("\nADD ROUND KEYS\n");
 		printMatrix(src);
-
-		addRoundKey(src, 0, allKeys[i]);
-		printf("\nADD ROUND KEY \n");
-		printMatrix(dst);
+	}
+	else
+	{
+		inverseSubBytes(src, 16);
+		printf("\nSUB BYTES\n");
+		printMatrix(src);
+		inverseShiftRows(src, 0);
+		printf("\nSHIFT ROWS\n");
+		printMatrix(src);
+		addRoundKey(src, 0, allKeys[rounds]);
+		printf("\nADD ROUND KEYS\n");
+		printMatrix(src);
 	}
 }
 
-void doFinalRound(byte * src, byte * dst, int rounds, byte ** allKeys)
-{
-	printf("\nFINALRU ROUUNDUUUU!\n");
-
-	subBytes(src, 16);
-	printf("\nSUB BYTES\n");
-	printMatrix(src);
-	shiftRows(src, 0);
-	printf("\nSHIFT ROWS\n");
-	printMatrix(src);
-	addRoundKey(src, 0, allKeys[rounds]);
-	printf("\nADD ROUND KEYS\n");
-	printMatrix(src);
-}
-
-void doAES(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type)
+void doAES(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type,int mode)
 {
 
 	doInitRound(data, result, allKeys[0], *toXor);
 
 
-	doRounds(result, result, rounds, allKeys);
-	doFinalRound(result, result, rounds, allKeys);
+	doRounds(result, result, rounds, allKeys,mode);
+	doFinalRound(result, result, rounds, allKeys,mode);
 	if (type == CBC) // SE CBC
 	{
 		*toXor = result;
@@ -295,7 +396,7 @@ void matrixTransposer(byte* data)
 	}
 }
 
-void startAES(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv)
+void startAES(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv,int mode)
 {
 
 
@@ -323,7 +424,10 @@ void startAES(byte * data, int dataSize, byte * key, byte * result, int rounds, 
 	for (int i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
-		doAES(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type);
+		if(mode == ENCRYPT)
+			doAES(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type,mode);
+		else
+			doAES(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type,mode);
 
 	}
 	for (int i = 0; i < dataSize / 16; i++)

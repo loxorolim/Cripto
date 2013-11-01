@@ -5,7 +5,8 @@ void shiftRowsTest();
 void addRoundKeyTest();
 void testGenerateRoundKeys();
 void testMixColumns();
-void testeBoladoEBC();
-void testeBoladoCBC();
+void testeBoladoEBC(int mode);
+void testeBoladoCBC(int mode);
+void testeBoladoEBCDecrypt();
 
 #endif
