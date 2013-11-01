@@ -270,7 +270,7 @@ void xor(byte * a, byte * b, byte * result)
 	}
 }
 
-void encryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type,int mode)
+void encryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type)
 {
 	if (type == CBC)
 		xor(data, *toXor, result);
@@ -299,7 +299,7 @@ void encryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* re
 		*toXor = result;
 }
 
-void decryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type, int mode)
+void decryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type)
 {
 	memcpy(result, data, 16 * sizeof(byte));
 
@@ -338,7 +338,7 @@ void matrixTransposer(byte* data)
 	}
 }
 
-void encrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv,int mode)
+void encrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv)
 {
 	matrixTransposer(key);
 
@@ -358,9 +358,9 @@ void encrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, i
 	for (int i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
-		encryptBlock(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type,mode);
-
+		encryptBlock(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type);
 	}
+
 	for (int i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(result + i * 16);
@@ -375,7 +375,7 @@ void encrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, i
 	free(allKeys);
 }
 
-void decrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, int mode)
+void decrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv)
 {
 	matrixTransposer(key);
 
@@ -394,7 +394,7 @@ void decrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, i
 	for (int i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
-		decryptBlock(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type, mode);
+		decryptBlock(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type);
 	}
 
 	for (int i = 0; i < dataSize / 16; i++)

@@ -4,9 +4,6 @@
 #define EBC 1
 #define CBC 0
 
-#define ENCRYPT 1
-#define DECRYPT 0
-
 typedef unsigned char byte;
 
 byte gmul(byte a, byte b);
@@ -30,10 +27,10 @@ void makeRoundKey(int roundCount, byte **allKeys);
 void makeAllRoundKeys(int roundCount, byte **allKeys, byte *firstKey);
 void xor(byte * a, byte * b, byte * result);
 
-void encrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, int mode);
-void encryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type,int mode);
-void decrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, int mode);
-void decryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type, int mode);
+void encrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv);
+void encryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type);
+void decrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv);
+void decryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type);
 
 void matrixTransposer(byte* data);
 long calculateOnBits(byte b);
