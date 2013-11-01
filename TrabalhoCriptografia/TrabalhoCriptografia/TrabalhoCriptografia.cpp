@@ -355,8 +355,24 @@ void doAES(byte* data,byte** allKeys,int rounds,byte** toXor, byte* result,int t
 	}
 
 }
+void matrixTransposer(byte* data)
+{
+	for(int i = 0; i < 4 ;i++)
+	{
+		for(int j = 0; j < i ;j++)
+		{
+			byte aux = data[i*4+j];
+			data[i*4+j] = data[j*4+i];
+			data[j*4+i] = aux;
+		}
+	}
+}
 void startAES( byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv)
 {
+
+	
+	
+	matrixTransposer(key);
 
 	byte **allKeys = (byte**)calloc(rounds+1,sizeof(byte*));
 	for (int i = 0; i < rounds+1; i++)
@@ -371,13 +387,24 @@ void startAES( byte * data, int dataSize, byte * key, byte * result, int rounds,
 	}
 	if(type == CBC) //CBC
 	{
+		matrixTransposer(iv);
 		toXor = iv;
+
 	}
 
 	for(int i = 0; i < dataSize/16 ; i++)
 	{
+		matrixTransposer(data + i*16);
 		doAES(data + i*16,allKeys,rounds,&toXor,result+i*16,type);
+		
 	}
+	for(int i = 0; i < dataSize/16;i++)
+	{
+		matrixTransposer(result+i*16);
+		printf("\nRESULTADO FINAL EM NOSSO FORMATO\n");
+		printMatrix(result+i*16);
+	}
+	
 	for(int i = 0; i < rounds+1 ; i++)
 	{
 		free(allKeys[i]);
@@ -385,18 +412,7 @@ void startAES( byte * data, int dataSize, byte * key, byte * result, int rounds,
 	}
 	free(allKeys);
 }
-void matrixTransposer(byte* data)
-{
-	for(int i = 0; i < 4 ;i++)
-	{
-		for(int j = 0; j < i ;j++)
-		{
-			byte aux = data[i*4+j];
-			data[i*4+j] = data[j*4+i];
-			data[j*4+i] = aux;
-		}
-	}
-}
+
 void testeBoladoEBC()
 {
 	byte originalKey[] = {
@@ -406,11 +422,10 @@ void testeBoladoEBC()
 		0x16, 0xa6, 0x88, 0x3c
 	};
 
-	byte inputData[16] = {0x32,0x88,0x31,0xe0,0x43,0x5a,0x31,0x37,0xf6,0x30,0x98,0x07,0xa8,0x8d,0xa2,0x34};
-	byte result[16] ;
-	matrixTransposer(inputData);
-	matrixTransposer(originalKey);
-	startAES(inputData,16,originalKey,result,10,EBC,NULL);
+	byte inputData[32] = {0x32,0x88,0x31,0xe0,0x43,0x5a,0x31,0x37,0xf6,0x30,0x98,0x07,0xa8,0x8d,0xa2,0x34,0x32,0x88,0x31,0xe0,0x43,0x5a,0x31,0x37,0xf6,0x30,0x98,0x07,0xa8,0x8d,0xa2,0x34};
+	byte result[32] ;
+
+	startAES(inputData,32,originalKey,result,10,EBC,NULL);
 
 	//printMatrix(inputData,0);
 
@@ -424,13 +439,12 @@ void testeBoladoCBC()
 		0x15, 0xd2, 0x15, 0x4f,
 		0x16, 0xa6, 0x88, 0x3c
 	};
-	byte iv[16] = {0x09,0x11,0x91,0x33,0x72,0x49,0x91,0xCE,0x7F,0x78,0x2D,0x71,0xF6,0x5E,0x46,0x4D};
-	byte inputData[16] = {0x32,0x88,0x31,0xe0,0x43,0x5a,0x31,0x37,0xf6,0x30,0x98,0x07,0xa8,0x8d,0xa2,0x34};
-	byte result[16] ;
-	matrixTransposer(iv);
-	matrixTransposer(inputData);
-	matrixTransposer(originalKey);
-	startAES(inputData,16,originalKey,result,10,CBC,iv);
+	byte iv[16] = {0x59,0xA1,0xD3,0x3E,0xCB,0x37,0x56,0x0B,0x7E,0x3D,0xD3,0xA2,0x41,0x8A,0x1A,0x2C};
+	byte inputData[32] = {0x32,0x88,0x31,0xe0,0x43,0x5a,0x31,0x37,0xf6,0x30,0x98,0x07,0xa8,0x8d,0xa2,0x34,
+						  0x32,0x88,0x31,0xe0,0x43,0x5a,0x31,0x37,0xf6,0x30,0x98,0x07,0xa8,0x8d,0xa2,0x34};
+	byte result[32] ;
+	
+	startAES(inputData,32,originalKey,result,10,CBC,iv);
 
 	//printMatrix(inputData,0);
 
