@@ -3,12 +3,17 @@
 #include "stdafx.h"
 #include "Tests.h"
 #include <stdlib.h>
+#include <IL/il.h>
 
 #define ENCRYPT 1
 #define DECRYPT 0
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	ilInit();
+	ilEnable(IL_FILE_OVERWRITE);
+	ilEnable(IL_ORIGIN_SET);
+	ilOriginFunc(IL_ORIGIN_UPPER_LEFT);
 	//shiftRowsTest();
 	//addRoundKeyTest();
 	//testMixColumns();
@@ -18,7 +23,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//inverseShiftRowsTest();
 	//testeBoladoEBC(DECRYPT);
 	//testeBoladoEBCDecrypt();
-	testeBoladoCBCDecrypt();
+	//testeBoladoCBCDecrypt();
+	imageEBCTest();
 	//inverseSubBytesTest();
 	//testInverseMixColumns();
 	//byte b1[] = {85};

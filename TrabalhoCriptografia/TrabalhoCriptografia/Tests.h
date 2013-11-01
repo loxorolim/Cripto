@@ -17,4 +17,6 @@ void testeBoladoCBC(int mode);
 void testeBoladoEBCDecrypt();
 void testeBoladoCBCDecrypt();
 
+void imageEBCTest();
+
 #endif

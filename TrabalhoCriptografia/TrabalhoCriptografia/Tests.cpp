@@ -1,6 +1,6 @@
 #include "Tests.h"
 #include "AES.h"
-
+#include "Images.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -181,4 +181,18 @@ void inverseSubBytesTest(){
 	inverseSubBytes(teste, 16);
 	printf("\nDeSubbed:\n");
 	printMatrix(teste);
+}
+
+void imageEBCTest(){
+	const char* dest = "kocada.bmp";
+	
+	byte key[] = {
+		0x2b, 0x28, 0xab, 0x09,
+		0x7e, 0xae, 0xf7, 0xcf,
+		0x15, 0xd2, 0x15, 0x4f,
+		0x16, 0xa6, 0x88, 0x3c
+	};
+
+	encryptImage("kocada.bmp", "kocada_crypt.bmp", key, 10, NULL, EBC);
+	//decryptImage("kocada_crypt.bmp", "kocada_decrypt.bmp", key, 10, NULL, EBC);
 }
