@@ -270,16 +270,18 @@ void xor(byte * a, byte * b, byte * result)
 	}
 }
 
-void doInitRound(byte * data, byte * result, byte* key, byte* toXor)
+void doInitRound(byte * data, byte * result, byte* key, byte* toXor, int mode)
 {
 	if (toXor != NULL)
 		xor(data, toXor, result);
 	else
 		memcpy(result, data, 16 * sizeof(byte));
 
-	addRoundKey(result, 0, key);
-	printMatrix(result);
-	printf("Fim do init round");
+	if (mode == ENCRYPT){
+		addRoundKey(result, 0, key);
+		printMatrix(result);
+		printf("Fim do init round");
+	}
 }
 
 void doRounds(byte * src, byte * dst, int rounds, byte ** allKeys,int mode)
@@ -306,19 +308,22 @@ void doRounds(byte * src, byte * dst, int rounds, byte ** allKeys,int mode)
 		else
 		{
 			printf("%d\n", i);
-			inverseSubBytes(src, 16);
-			printf("\nSUB BYTES\n");
-			printMatrix(src);
-			inverseShiftRows(src);
-			printf("\nSHIFT ROWS\n");
-			printMatrix(src);
-			inverseMixColumns(src);
-			printf("\nMIX COLUMNS\n");
-			printMatrix(src);
 
 			addRoundKey(src, 0, allKeys[i]);
 			printf("\nADD ROUND KEY \n");
 			printMatrix(dst);
+
+			printf("\nMIX COLUMNS\n");
+			inverseMixColumns(src);
+			printMatrix(src);
+
+			printf("\nSHIFT ROWS\n");
+			inverseShiftRows(src);
+			printMatrix(src);
+
+			printf("\nSUB BYTES\n");
+			inverseSubBytes(src, 16);
+			printMatrix(src);
 		}
 	}
 }
@@ -340,14 +345,16 @@ void doFinalRound(byte * src, byte * dst, int rounds, byte ** allKeys,int mode)
 	}
 	else
 	{
-		inverseSubBytes(src, 16);
-		printf("\nSUB BYTES\n");
+		addRoundKey(src, 0, allKeys[rounds]);
+		printf("\nADD ROUND KEYS\n");
 		printMatrix(src);
+
 		inverseShiftRows(src);
 		printf("\nSHIFT ROWS\n");
 		printMatrix(src);
-		addRoundKey(src, 0, allKeys[rounds]);
-		printf("\nADD ROUND KEYS\n");
+
+		inverseSubBytes(src, 16);
+		printf("\nSUB BYTES\n");
 		printMatrix(src);
 	}
 }
@@ -408,10 +415,7 @@ void startAES(byte * data, int dataSize, byte * key, byte * result, int rounds, 
 	for (int i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
-		if(mode == ENCRYPT)
-			doAES(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type,mode);
-		else
-			doAES(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type,mode);
+		doAES(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type,mode);
 
 	}
 	for (int i = 0; i < dataSize / 16; i++)
