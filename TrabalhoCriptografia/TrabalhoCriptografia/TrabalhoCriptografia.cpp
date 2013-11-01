@@ -151,7 +151,7 @@ void subBytes(byte *bytes, int count){
 		bytes[i] = sbox[bytes[i]];
 }
 
-void printMatrix(byte *matrix, int startingIndex){
+void printMatrix(byte *matrix){
 	int i, j;
 	for (i = 0; i < 4; i++){
 		for (j = 0; j < 4; j++){
@@ -183,7 +183,7 @@ void shiftRowsTest(){
 		0xae, 0xf1, 0xe5, 0x30
 	};
 	shiftRows(mat, 4);
-	printMatrix(mat, 0);
+	printMatrix(mat);
 }
 
 void addRoundKey(byte *state, int startingIndex, byte *subkey){
@@ -207,7 +207,7 @@ void addRoundKeyTest(){
 		0x17, 0xb1, 0x39, 0x05
 	};
 	addRoundKey(mat, 0, subkey);
-	printMatrix(mat, 0);
+	printMatrix(mat);
 }
 
 void makeRoundKey(int roundCount, byte **allKeys)
@@ -260,7 +260,7 @@ void testGenerateRoundKeys(){
 	for (i = 1; i < 4; i++){
 	//	makeAllRoundKeys(i, allKeys);
 		printf("\nRound %d:\n", i);
-		printMatrix(allKeys[i], 0);
+		printMatrix(allKeys[i]);
 		
 	}
 
@@ -301,7 +301,7 @@ void doInitRound(byte * data,byte * result,byte* key,byte* toXor)
 		memcpy(result,data,16*sizeof(byte));
 	
 	addRoundKey(result,0,key);
-	printMatrix(result,0);
+	printMatrix(result);
 	printf("Fim do init round");
 
 	
@@ -313,17 +313,17 @@ void doRounds(byte * src, byte * dst,int rounds, byte ** allKeys)
 		printf("%d\n",i);
 		subBytes(src,16);
 		printf("\nSUB BYTES\n");
-		printMatrix(src,0);
+		printMatrix(src);
 		shiftRows(src,0);
 		printf("\nSHIFT ROWS\n");
-		printMatrix(src,0);
+		printMatrix(src);
 		mixColumns(src,0);
 		printf("\nMIX COLUMNS\n");
-		printMatrix(src,0);
+		printMatrix(src);
 
 		addRoundKey(src,0,allKeys[i]);
 		printf("\nADD ROUND KEY \n");
-		printMatrix(dst,0);
+		printMatrix(dst);
 	}
 	
 }
@@ -333,13 +333,13 @@ void doFinalRound(byte * src, byte * dst,int rounds, byte ** allKeys)
 
 		subBytes(src,16);
 		printf("\nSUB BYTES\n");
-		printMatrix(src,0);
+		printMatrix(src);
 		shiftRows(src,0);
 		printf("\nSHIFT ROWS\n");
-		printMatrix(src,0);
+		printMatrix(src);
 		addRoundKey(src,0,allKeys[rounds]);
 		printf("\nADD ROUND KEYS\n");
-		printMatrix(src,0);
+		printMatrix(src);
 }
 void doAES(byte* data,byte** allKeys,int rounds,byte** toXor, byte* result,int type)
 {
