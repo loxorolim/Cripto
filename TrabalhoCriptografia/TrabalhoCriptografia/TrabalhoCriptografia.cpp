@@ -409,13 +409,35 @@ void testeBolado()
 
 	byte inputData[16] = {0x32,0x88,0x31,0xe0,0x43,0x5a,0x31,0x37,0xf6,0x30,0x98,0x07,0xa8,0x8d,0xa2,0x34};
 	byte result[16] ;
-	//matrixTransposer(inputData);
-	//matrixTransposer(originalKey);
+	matrixTransposer(inputData);
+	matrixTransposer(originalKey);
 	startAES(inputData,16,originalKey,result,10,CBC,NULL);
 
 	//printMatrix(inputData,0);
 
 	//printMatrix(result,0);
+}
+long calculateOnBits(byte b)
+{
+	long count = 0;
+	for(int i =0;i<8;i++)
+	{
+		byte mask = 1<<i;
+		if((mask  & b) != 0)
+			count ++ ;
+	}
+	return count;
+}
+long calculateHammingDistance( byte * clearM, byte * criptoM, int arraySize)
+{
+	long dist = 0;
+	
+	for(int i = 0; i < arraySize;i++)
+	{
+		byte xor = clearM[i]^criptoM[i];
+		dist += calculateOnBits(xor);
+	}
+	return dist;
 }
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -423,7 +445,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	//addRoundKeyTest();
 	//testMixColumns();
 	//testGenerateRoundKeys();
-	testeBolado();
+	//testeBolado();
+	byte b1[] = {85};
+	byte b2[] = {17};
+	printf("%d", calculateHammingDistance(b1,b2,1));
 	system("pause");
 
 	return 0;
