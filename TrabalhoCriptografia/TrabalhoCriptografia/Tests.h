@@ -15,5 +15,6 @@ void testInverseMixColumns();
 void testeBoladoEBC(int mode);
 void testeBoladoCBC(int mode);
 void testeBoladoEBCDecrypt();
+void testeBoladoCBCDecrypt();
 
 #endif

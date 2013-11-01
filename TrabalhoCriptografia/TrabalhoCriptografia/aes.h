@@ -29,12 +29,13 @@ void addRoundKeyTest();
 void makeRoundKey(int roundCount, byte **allKeys);
 void makeAllRoundKeys(int roundCount, byte **allKeys, byte *firstKey);
 void xor(byte * a, byte * b, byte * result);
-void doInitRound(byte * data, byte * result, byte* key, byte* toXor);
-void doRounds(byte * src, byte * dst, int rounds, byte ** allKeys,int mode);
-void doFinalRound(byte * src, byte * dst, int rounds, byte ** allKeys,int mode);
-void doAES(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type,int mode);
+
+void encrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, int mode);
+void encryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type,int mode);
+void decrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, int mode);
+void decryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type, int mode);
+
 void matrixTransposer(byte* data);
-void startAES(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv,int mode);
 long calculateOnBits(byte b);
 long calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize);
 

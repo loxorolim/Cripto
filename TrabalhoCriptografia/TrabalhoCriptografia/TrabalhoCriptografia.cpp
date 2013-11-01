@@ -14,9 +14,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	//testMixColumns();
 	//testGen/erateRoundKeys();
 	//testeBoladoEBC(ENCRYPT);
+	//testeBoladoCBC(ENCRYPT);
 	//inverseShiftRowsTest();
 	//testeBoladoEBC(DECRYPT);
-	testeBoladoEBCDecrypt();
+	//testeBoladoEBCDecrypt();
+	testeBoladoCBCDecrypt();
 	//inverseSubBytesTest();
 	//testInverseMixColumns();
 	//byte b1[] = {85};

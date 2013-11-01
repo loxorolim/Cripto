@@ -270,108 +270,59 @@ void xor(byte * a, byte * b, byte * result)
 	}
 }
 
-void doInitRound(byte * data, byte * result, byte* key, byte* toXor, int mode)
+void encryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type,int mode)
 {
-	if (toXor != NULL)
-		xor(data, toXor, result);
+	if (type == CBC)
+		xor(data, *toXor, result);
 	else
 		memcpy(result, data, 16 * sizeof(byte));
 
-	if (mode == ENCRYPT){
-		addRoundKey(result, 0, key);
-		printMatrix(result);
-		printf("Fim do init round");
-	}
-}
+	//Primeiro Round
+	addRoundKey(result, 0, allKeys[0]);
 
-void doRounds(byte * src, byte * dst, int rounds, byte ** allKeys,int mode)
-{
+	//demais rounds
 	for (int i = 1; i < rounds; i++)
 	{
-		if(mode == ENCRYPT)
-		{
-			printf("%d\n", i);
-			subBytes(src, 16);
-			printf("\nSUB BYTES\n");
-			printMatrix(src);
-			shiftRows(src);
-			printf("\nSHIFT ROWS\n");
-			printMatrix(src);
-			mixColumns(src);
-			printf("\nMIX COLUMNS\n");
-			printMatrix(src);
+		subBytes(result, 16);
+		shiftRows(result);
+		mixColumns(result);
 
-			addRoundKey(src, 0, allKeys[i]);
-			printf("\nADD ROUND KEY \n");
-			printMatrix(dst);
-		}
-		else
-		{
-			printf("%d\n", i);
-
-			addRoundKey(src, 0, allKeys[i]);
-			printf("\nADD ROUND KEY \n");
-			printMatrix(dst);
-
-			printf("\nMIX COLUMNS\n");
-			inverseMixColumns(src);
-			printMatrix(src);
-
-			printf("\nSHIFT ROWS\n");
-			inverseShiftRows(src);
-			printMatrix(src);
-
-			printf("\nSUB BYTES\n");
-			inverseSubBytes(src, 16);
-			printMatrix(src);
-		}
+		addRoundKey(result, 0, allKeys[i]);
 	}
-}
 
-void doFinalRound(byte * src, byte * dst, int rounds, byte ** allKeys,int mode)
-{
-	printf("\nFINALRU ROUUNDUUUU!\n");
-	if(mode == ENCRYPT)
-	{
-		subBytes(src, 16);
-		printf("\nSUB BYTES\n");
-		printMatrix(src);
-		shiftRows(src);
-		printf("\nSHIFT ROWS\n");
-		printMatrix(src);
-		addRoundKey(src, 0, allKeys[rounds]);
-		printf("\nADD ROUND KEYS\n");
-		printMatrix(src);
-	}
-	else
-	{
-		addRoundKey(src, 0, allKeys[rounds]);
-		printf("\nADD ROUND KEYS\n");
-		printMatrix(src);
+	//Último round
+	subBytes(result, 16);
+	shiftRows(result);
+	addRoundKey(result, 0, allKeys[rounds]);
 
-		inverseShiftRows(src);
-		printf("\nSHIFT ROWS\n");
-		printMatrix(src);
-
-		inverseSubBytes(src, 16);
-		printf("\nSUB BYTES\n");
-		printMatrix(src);
-	}
-}
-
-void doAES(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type,int mode)
-{
-
-	doInitRound(data, result, allKeys[0], *toXor);
-
-
-	doRounds(result, result, rounds, allKeys,mode);
-	doFinalRound(result, result, rounds, allKeys,mode);
 	if (type == CBC) // SE CBC
-	{
 		*toXor = result;
+}
+
+void decryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type, int mode)
+{
+	memcpy(result, data, 16 * sizeof(byte));
+
+	//Primeiro round
+	addRoundKey(result, 0, allKeys[rounds]);
+	inverseShiftRows(result);
+	inverseSubBytes(result, 16);
+
+	//demais rounds
+	for (int i = rounds - 1; i >= 1; i--){
+		addRoundKey(result, 0, allKeys[i]);
+		inverseMixColumns(result);
+		inverseShiftRows(result);
+		inverseSubBytes(result, 16);
 	}
 
+	//Último round
+	addRoundKey(result, 0, allKeys[0]);
+
+	if (type == CBC){
+		xor(result, *toXor, result);
+		*toXor = data;
+	}	
 }
 
 void matrixTransposer(byte* data)
@@ -387,11 +338,8 @@ void matrixTransposer(byte* data)
 	}
 }
 
-void startAES(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv,int mode)
+void encrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv,int mode)
 {
-
-
-
 	matrixTransposer(key);
 
 	byte **allKeys = (byte**)calloc(rounds + 1, sizeof(byte*));
@@ -400,11 +348,6 @@ void startAES(byte * data, int dataSize, byte * key, byte * result, int rounds, 
 	makeAllRoundKeys(rounds, allKeys, key);
 
 	byte* toXor = NULL;
-	if (type == EBC) //EBC
-	{
-
-
-	}
 	if (type == CBC) //CBC
 	{
 		matrixTransposer(iv);
@@ -415,7 +358,7 @@ void startAES(byte * data, int dataSize, byte * key, byte * result, int rounds, 
 	for (int i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
-		doAES(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type,mode);
+		encryptBlock(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type,mode);
 
 	}
 	for (int i = 0; i < dataSize / 16; i++)
@@ -426,10 +369,45 @@ void startAES(byte * data, int dataSize, byte * key, byte * result, int rounds, 
 	}
 
 	for (int i = 0; i < rounds + 1; i++)
-	{
 		free(allKeys[i]);
 
+	
+	free(allKeys);
+}
+
+void decrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, int mode)
+{
+	matrixTransposer(key);
+
+	byte **allKeys = (byte**)calloc(rounds + 1, sizeof(byte*));
+	for (int i = 0; i < rounds + 1; i++)
+		allKeys[i] = (byte*)calloc(16, sizeof(byte));
+	makeAllRoundKeys(rounds, allKeys, key);
+
+	byte* toXor = NULL;
+	if (type == CBC) //CBC
+	{
+		matrixTransposer(iv);
+		toXor = iv;
 	}
+
+	for (int i = 0; i < dataSize / 16; i++)
+	{
+		matrixTransposer(data + i * 16);
+		decryptBlock(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type, mode);
+	}
+
+	for (int i = 0; i < dataSize / 16; i++)
+	{
+		matrixTransposer(result + i * 16);
+		printf("\nRESULTADO FINAL EM NOSSO FORMATO\n");
+		printMatrix(result + i * 16);
+	}
+
+	for (int i = 0; i < rounds + 1; i++)
+		free(allKeys[i]);
+
+	
 	free(allKeys);
 }
 
