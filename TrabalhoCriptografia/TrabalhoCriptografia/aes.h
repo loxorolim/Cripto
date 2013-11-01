@@ -10,13 +10,17 @@
 typedef unsigned char byte;
 
 unsigned char gmul(unsigned char a, unsigned char b);
-void mixColumns(unsigned char* val, int index);
+
+void mixColumns(byte* val);
+void inverseMixColumns(byte* val);
 
 void subBytes(byte *bytes, int count);
+void inverseSubBytes(byte *bytes, int count);
 
 void printMatrix(byte *matrix);
 
-void shiftRows(byte* matrix, int startingIndex);
+void shiftRows(byte* matrix);
+void inverseShiftRows(byte* matrix);
 
 void addRoundKey(byte *state, int startingIndex, byte *subkey);
 

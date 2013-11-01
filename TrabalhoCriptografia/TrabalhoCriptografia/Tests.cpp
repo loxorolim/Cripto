@@ -11,7 +11,22 @@ void shiftRowsTest(){
 		0x11, 0x98, 0x5d, 0x52,
 		0xae, 0xf1, 0xe5, 0x30
 	};
-	shiftRows(mat, 4);
+	shiftRows(mat);
+	printMatrix(mat);
+}
+
+void inverseShiftRowsTest(){
+	printf("Inverse shift rows test\n");
+	byte mat[] = {
+		0xd4, 0xe0, 0xb8, 0x1e,
+		0x27, 0xbf, 0xb4, 0x41,
+		0x11, 0x98, 0x5d, 0x52,
+		0xae, 0xf1, 0xe5, 0x30
+	};
+	shiftRows(mat);
+	printMatrix(mat);
+	printf("\n");
+	inverseShiftRows(mat);
 	printMatrix(mat);
 }
 
@@ -61,19 +76,23 @@ void testGenerateRoundKeys(){
 
 void testMixColumns(){
 	unsigned char teste[] = { 0xd4, 0xe0, 0xb8, 0x1e, 0xbf, 0xb4, 0x41, 0x27, 0x5d, 0x52, 0x11, 0x98, 0x30, 0xae, 0xf1, 0xe5 };
-	for (int i = 0; i<16; i++)
-	{
-		printf("%x ", *(teste + i));
-		if (i % 4 == 3)
-			printf("\n");
-	}
-	mixColumns(teste, 0);
-	for (int i = 0; i<16; i++)
-	{
-		printf("%x ", *(teste + i));
-		if (i % 4 == 3)
-			printf("\n");
-	}
+	
+	printMatrix(teste);
+	mixColumns(teste);
+	printMatrix(teste);
+}
+
+void testInverseMixColumns(){
+	byte teste[] = { 0xd4, 0xe0, 0xb8, 0x1e, 0xbf, 0xb4, 0x41, 0x27, 0x5d, 0x52, 0x11, 0x98, 0x30, 0xae, 0xf1, 0xe5 };
+	printf("Inverse mix columns test\n");
+	printf("Original:\n");
+	printMatrix(teste);
+	mixColumns(teste);
+	printf("\nMixed:\n");
+	printMatrix(teste);
+	inverseMixColumns(teste);
+	printf("\nDemixed:\n");
+	printMatrix(teste);
 }
 
 void testeBoladoEBC(int mode)

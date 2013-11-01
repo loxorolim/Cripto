@@ -91,7 +91,7 @@ unsigned char gmul(unsigned char a, unsigned char b) {
 	//return p;
 }
 
-void mixColumns(unsigned char* val, int index)
+void mixColumns(byte* val)
 {
 	unsigned char n1 = 0;
 	unsigned char n2 = 0;
@@ -106,39 +106,39 @@ void mixColumns(unsigned char* val, int index)
 	for (int i = 0; i < 4; i++)
 	{
 
-		n1 = gmul(*(val + i + 0 + index), 0x02);
-		n2 = gmul(*(val + i + 4 + index), 0x03);
-		n3 = gmul(*(val + i + 8 + index), 0x01);
-		n4 = gmul(*(val + i + 12 + index), 0x01);
+		n1 = gmul(*(val + i + 0), 0x02);
+		n2 = gmul(*(val + i + 4), 0x03);
+		n3 = gmul(*(val + i + 8), 0x01);
+		n4 = gmul(*(val + i + 12), 0x01);
 
 		n5[0 + i] = n1^n2^n3^n4;
 
-		n1 = gmul(*(val + i + 0 + index), 0x01);
-		n2 = gmul(*(val + i + 4 + index), 0x02);
-		n3 = gmul(*(val + i + 8 + index), 0x03);
-		n4 = gmul(*(val + i + 12 + index), 0x01);
+		n1 = gmul(*(val + i + 0), 0x01);
+		n2 = gmul(*(val + i + 4), 0x02);
+		n3 = gmul(*(val + i + 8), 0x03);
+		n4 = gmul(*(val + i + 12), 0x01);
 
 		n5[4 + i] = n1^n2^n3^n4;
 
 
-		n1 = gmul(*(val + i + 0 + index), 0x01);
-		n2 = gmul(*(val + i + 4 + index), 0x01);
-		n3 = gmul(*(val + i + 8 + index), 0x02);
-		n4 = gmul(*(val + i + 12 + index), 0x03);
+		n1 = gmul(*(val + i + 0), 0x01);
+		n2 = gmul(*(val + i + 4), 0x01);
+		n3 = gmul(*(val + i + 8), 0x02);
+		n4 = gmul(*(val + i + 12), 0x03);
 
 		n5[8 + i] = n1^n2^n3^n4;
 
 
-		n1 = gmul(*(val + i + 0 + index), 0x03);
-		n2 = gmul(*(val + i + 4 + index), 0x01);
-		n3 = gmul(*(val + i + 8 + index), 0x01);
-		n4 = gmul(*(val + i + 12 + index), 0x02);
+		n1 = gmul(*(val + i + 0), 0x03);
+		n2 = gmul(*(val + i + 4), 0x01);
+		n3 = gmul(*(val + i + 8), 0x01);
+		n4 = gmul(*(val + i + 12), 0x02);
 
 		n5[12 + i] = n1^n2^n3^n4;
 	}
-	memcpy(val + index, n5, sizeof(unsigned char)* 16);
+	memcpy(val, n5, sizeof(unsigned char)* 16);
 }
-void inverseMixColumns(unsigned char* val, int index)
+void inverseMixColumns(byte* val)
 {
 	unsigned char n1 = 0;
 	unsigned char n2 = 0;
@@ -153,37 +153,37 @@ void inverseMixColumns(unsigned char* val, int index)
 	for (int i = 0; i < 4; i++)
 	{
 
-		n1 = gmul(*(val + i + 0 + index), 0x14);
-		n2 = gmul(*(val + i + 4 + index), 0x11);
-		n3 = gmul(*(val + i + 8 + index), 0x13);
-		n4 = gmul(*(val + i + 12 + index), 0x09);
+		n1 = gmul(*(val + i + 0), 0x14);
+		n2 = gmul(*(val + i + 4), 0x11);
+		n3 = gmul(*(val + i + 8), 0x13);
+		n4 = gmul(*(val + i + 12), 0x09);
 
 		n5[0 + i] = n1^n2^n3^n4;
 
-		n1 = gmul(*(val + i + 0 + index), 0x09);
-		n2 = gmul(*(val + i + 4 + index), 0x14);
-		n3 = gmul(*(val + i + 8 + index), 0x11);
-		n4 = gmul(*(val + i + 12 + index), 0x13);
+		n1 = gmul(*(val + i + 0), 0x09);
+		n2 = gmul(*(val + i + 4), 0x14);
+		n3 = gmul(*(val + i + 8), 0x11);
+		n4 = gmul(*(val + i + 12), 0x13);
 
 		n5[4 + i] = n1^n2^n3^n4;
 
 
-		n1 = gmul(*(val + i + 0 + index), 0x13);
-		n2 = gmul(*(val + i + 4 + index), 0x09);
-		n3 = gmul(*(val + i + 8 + index), 0x14);
-		n4 = gmul(*(val + i + 12 + index), 0x11);
+		n1 = gmul(*(val + i + 0), 0x13);
+		n2 = gmul(*(val + i + 4), 0x09);
+		n3 = gmul(*(val + i + 8), 0x14);
+		n4 = gmul(*(val + i + 12), 0x11);
 
 		n5[8 + i] = n1^n2^n3^n4;
 
 
-		n1 = gmul(*(val + i + 0 + index), 0x11);
-		n2 = gmul(*(val + i + 4 + index), 0x13);
-		n3 = gmul(*(val + i + 8 + index), 0x09);
-		n4 = gmul(*(val + i + 12 + index), 0x14);
+		n1 = gmul(*(val + i + 0), 0x11);
+		n2 = gmul(*(val + i + 4), 0x13);
+		n3 = gmul(*(val + i + 8), 0x09);
+		n4 = gmul(*(val + i + 12), 0x14);
 
 		n5[12 + i] = n1^n2^n3^n4;
 	}
-	memcpy(val + index, n5, sizeof(unsigned char)* 16);
+	memcpy(val, n5, sizeof(unsigned char)* 16);
 }
 
 void subBytes(byte *bytes, int count){
@@ -206,34 +206,34 @@ void printMatrix(byte *matrix){
 		printf("\n");
 	}
 }
-void inverseShiftRows(byte* matrix, int startingIndex){
+void inverseShiftRows(byte* matrix){
 	int i, j;
 	byte temp[16];
 
 	for (i = 0; i < 4; i++){
 		for (j = 0; j < 4; j++){
 			int newJ = (j - i) % 4;
-			if(newJ<1)
-				newJ+=4;
-			temp[4 * i + j] = matrix[startingIndex + 4 * i + newJ];
+			if(newJ < 0)
+				newJ += 4;
+			temp[4 * i + j] = matrix[4 * i + newJ];
 		}
 	}
 
-	memcpy(matrix + startingIndex, temp, 16);
+	memcpy(matrix, temp, 16);
 }
 
-void shiftRows(byte* matrix, int startingIndex){
+void shiftRows(byte* matrix){
 	int i, j;
 	byte temp[16];
 
 	for (i = 0; i < 4; i++){
 		for (j = 0; j < 4; j++){
 			int newJ = (j + i) % 4;
-			temp[4 * i + j] = matrix[startingIndex + 4 * i + newJ];
+			temp[4 * i + j] = matrix[4 * i + newJ];
 		}
 	}
 
-	memcpy(matrix + startingIndex, temp, 16);
+	memcpy(matrix, temp, 16);
 }
 
 void addRoundKey(byte *state, int startingIndex, byte *subkey){
@@ -308,10 +308,10 @@ void doRounds(byte * src, byte * dst, int rounds, byte ** allKeys,int mode)
 			subBytes(src, 16);
 			printf("\nSUB BYTES\n");
 			printMatrix(src);
-			shiftRows(src, 0);
+			shiftRows(src);
 			printf("\nSHIFT ROWS\n");
 			printMatrix(src);
-			mixColumns(src, 0);
+			mixColumns(src);
 			printf("\nMIX COLUMNS\n");
 			printMatrix(src);
 
@@ -325,10 +325,10 @@ void doRounds(byte * src, byte * dst, int rounds, byte ** allKeys,int mode)
 			inverseSubBytes(src, 16);
 			printf("\nSUB BYTES\n");
 			printMatrix(src);
-			inverseShiftRows(src, 0);
+			inverseShiftRows(src);
 			printf("\nSHIFT ROWS\n");
 			printMatrix(src);
-			inverseMixColumns(src, 0);
+			inverseMixColumns(src);
 			printf("\nMIX COLUMNS\n");
 			printMatrix(src);
 
@@ -347,7 +347,7 @@ void doFinalRound(byte * src, byte * dst, int rounds, byte ** allKeys,int mode)
 		subBytes(src, 16);
 		printf("\nSUB BYTES\n");
 		printMatrix(src);
-		shiftRows(src, 0);
+		shiftRows(src);
 		printf("\nSHIFT ROWS\n");
 		printMatrix(src);
 		addRoundKey(src, 0, allKeys[rounds]);
@@ -359,7 +359,7 @@ void doFinalRound(byte * src, byte * dst, int rounds, byte ** allKeys,int mode)
 		inverseSubBytes(src, 16);
 		printf("\nSUB BYTES\n");
 		printMatrix(src);
-		inverseShiftRows(src, 0);
+		inverseShiftRows(src);
 		printf("\nSHIFT ROWS\n");
 		printMatrix(src);
 		addRoundKey(src, 0, allKeys[rounds]);
