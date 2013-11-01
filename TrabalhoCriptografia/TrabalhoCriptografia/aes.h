@@ -9,7 +9,7 @@
 
 typedef unsigned char byte;
 
-unsigned char gmul(unsigned char a, unsigned char b);
+byte gmul(byte a, byte b);
 
 void mixColumns(byte* val);
 void inverseMixColumns(byte* val);

@@ -59,36 +59,20 @@ const byte rcon[] =
 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 0x72, 0xe4, 0xd3, 0xbd,
 0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb };
 
-unsigned char gmul(unsigned char a, unsigned char b) {
-	unsigned char resp = 0;
-	unsigned char high_bit;
-	if (b == 1)
-		resp = a;
-	else{
-		high_bit = a & 0x80;
-		resp = a << 1;
-		if (b == 3){
-			resp ^= a;
-		}
-		if (high_bit == 0x80)
-			resp = resp ^ 0x1b;
+byte gmul(byte a, byte b) {
+	byte p = 0;
+	int counter;
+	byte carry;
+	for (counter = 0; counter < 8; counter++) {
+	        if (b & 1) 
+	                p ^= a;
+	        carry = a & 0x80;
+	        a <<= 1;
+	        if (carry) 
+	                a ^= 0x001B;
+	        b >>= 1;
 	}
-
-	//	printf("%x\n",resp);
-	return resp;
-	//int p = 0;
-	//int counter;
-	//int carry;
-	//for (counter = 0; counter < 8; counter++) {
-	//        if (b & 1) 
-	//                p ^= a;
-	//        carry = a & 0x80;  /* detect if x^8 term is about to be generated */
-	//        a <<= 1;
-	//        if (carry) 
-	//                a ^= 0x001B; /* replace x^8 with x^4 + x^3 + x + 1 */
-	//        b >>= 1;
-	//}
-	//return p;
+	return p;
 }
 
 void mixColumns(byte* val)
@@ -153,33 +137,33 @@ void inverseMixColumns(byte* val)
 	for (int i = 0; i < 4; i++)
 	{
 
-		n1 = gmul(*(val + i + 0), 0x14);
-		n2 = gmul(*(val + i + 4), 0x11);
-		n3 = gmul(*(val + i + 8), 0x13);
-		n4 = gmul(*(val + i + 12), 0x09);
+		n1 = gmul(*(val + i + 0), 14);
+		n2 = gmul(*(val + i + 4), 11);
+		n3 = gmul(*(val + i + 8), 13);
+		n4 = gmul(*(val + i + 12), 9);
 
 		n5[0 + i] = n1^n2^n3^n4;
 
-		n1 = gmul(*(val + i + 0), 0x09);
-		n2 = gmul(*(val + i + 4), 0x14);
-		n3 = gmul(*(val + i + 8), 0x11);
-		n4 = gmul(*(val + i + 12), 0x13);
+		n1 = gmul(*(val + i + 0), 9);
+		n2 = gmul(*(val + i + 4), 14);
+		n3 = gmul(*(val + i + 8), 11);
+		n4 = gmul(*(val + i + 12), 13);
 
 		n5[4 + i] = n1^n2^n3^n4;
 
 
-		n1 = gmul(*(val + i + 0), 0x13);
-		n2 = gmul(*(val + i + 4), 0x09);
-		n3 = gmul(*(val + i + 8), 0x14);
-		n4 = gmul(*(val + i + 12), 0x11);
+		n1 = gmul(*(val + i + 0), 13);
+		n2 = gmul(*(val + i + 4), 9);
+		n3 = gmul(*(val + i + 8), 14);
+		n4 = gmul(*(val + i + 12), 11);
 
 		n5[8 + i] = n1^n2^n3^n4;
 
 
-		n1 = gmul(*(val + i + 0), 0x11);
-		n2 = gmul(*(val + i + 4), 0x13);
-		n3 = gmul(*(val + i + 8), 0x09);
-		n4 = gmul(*(val + i + 12), 0x14);
+		n1 = gmul(*(val + i + 0), 11);
+		n2 = gmul(*(val + i + 4), 13);
+		n3 = gmul(*(val + i + 8), 9);
+		n4 = gmul(*(val + i + 12), 14);
 
 		n5[12 + i] = n1^n2^n3^n4;
 	}
