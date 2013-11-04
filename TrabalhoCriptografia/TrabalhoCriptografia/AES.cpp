@@ -400,6 +400,7 @@ void decrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, i
 
 	for (int i = 0; i < dataSize / 16; i++)
 	{
+		matrixTransposer(data + i * 16);
 		matrixTransposer(result + i * 16);
 		//printf("\nRESULTADO FINAL EM NOSSO FORMATO\n");
 		//printMatrix(result + i * 16);

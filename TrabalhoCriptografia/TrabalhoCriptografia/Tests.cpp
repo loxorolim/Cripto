@@ -193,6 +193,28 @@ void imageEBCTest(){
 		0x16, 0xa6, 0x88, 0x3c
 	};
 
-	encryptImage("kocada.bmp", "kocada_crypt.bmp", key, 10, NULL, EBC);
+	byte iv[16] = { 0xB4, 0xCA, 0xD2, 0x45, 0x0E, 0x6F, 0x11, 0x20, 0x33, 0x34, 0xDD, 0x81, 0x47, 0x81, 0x13, 0x35 };
+
+	//const char* src = "kocada.bmp";
+	const char* src = "red.bmp";
+	char cryptDest[30];
+	char decryptDest[30];
+	sprintf(cryptDest, "crypt_%s", src);
+	sprintf(decryptDest, "decrypt_%s", src);
+
+	encryptImage("red.bmp", "red_crypt.bmp", key, 10, NULL, EBC);
+	decryptImage("red_crypt.bmp", "red_decrypt.bmp", key, 10, NULL, EBC);
+
+	//encryptImage("red.png", "red_crypt.png", key, 10, NULL, EBC);
+	//decryptImage("red_crypt.png", "red_decrypt.png", key, 10, NULL, EBC);
+
+	//encryptImage("red.png", "red_crypt.png", key, 10, NULL, EBC);
+	//decryptImage("red_crypt.png", "red_decrypt.png", key, 10, NULL, EBC);
+
 	//decryptImage("kocada_crypt.bmp", "kocada_decrypt.bmp", key, 10, NULL, EBC);
+	//encryptImage("kocada.bmp", "kocada_crypt.bmp", key, 10, iv, CBC);
+	//decryptImage("kocada_crypt.bmp", "kocada_decrypt.bmp", key, 10, iv, CBC);
+
+	//encryptImage("img0.jpg", "img0_crypt.jpg", key, 10, NULL, EBC);
+	//decryptImage("img0_crypt.jpg", "img0_decrypt.jpg", key, 10, NULL, EBC);
 }
