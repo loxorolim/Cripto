@@ -24,7 +24,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	//testeBoladoEBC(DECRYPT);
 	//testeBoladoEBCDecrypt();
 	//testeBoladoCBCDecrypt();
+	printf("Press to start!\n");
+	system("pause");
 	imageEBCTest();
+	imageCBCTest();
 	//inverseSubBytesTest();
 	//testInverseMixColumns();
 	//byte b1[] = {85};

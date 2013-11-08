@@ -18,5 +18,6 @@ void testeBoladoEBCDecrypt();
 void testeBoladoCBCDecrypt();
 
 void imageEBCTest();
+void imageCBCTest();
 
 #endif

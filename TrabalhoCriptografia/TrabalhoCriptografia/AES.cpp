@@ -352,7 +352,6 @@ void encrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, i
 	{
 		matrixTransposer(iv);
 		toXor = iv;
-
 	}
 
 	for (int i = 0; i < dataSize / 16; i++)
@@ -361,13 +360,17 @@ void encrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, i
 		encryptBlock(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type);
 	}
 
+	//transpor os dados de volta ===============================================================
 	for (int i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
 		matrixTransposer(result + i * 16);
-		/*printf("\nRESULTADO FINAL EM NOSSO FORMATO\n");
-		printMatrix(result + i * 16);*/
 	}
+
+	matrixTransposer(key);
+	if (type == CBC)
+		matrixTransposer(iv);
+	//fim transposição =========================================================================
 
 	for (int i = 0; i < rounds + 1; i++)
 		free(allKeys[i]);
