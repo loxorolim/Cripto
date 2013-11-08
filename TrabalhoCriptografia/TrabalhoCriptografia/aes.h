@@ -37,10 +37,14 @@ long calculateOnBits(byte b);
 long calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize);
 void byteStuffer(byte * b, int size);
 
-void encryptVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte *vigKey);
-void decryptVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte *vigKey);
 void vigenereCipherEncryption(byte *bytes, byte *key);
+void encryptBlockVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte *vigKey);
+void encryptVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte *vigKey);
+
 void vigenereCipherDecryption(byte *bytes, byte *key);
+void decryptBlockVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte *vigKey);
+void decryptVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte *vigKey);
+
 void columnarTransposition(byte *bytes, byte *key);
 
 #endif
