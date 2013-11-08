@@ -1,7 +1,7 @@
 #ifndef AES_H
 #define AES_H
 
-#define EBC 1
+#define ECB 1
 #define CBC 0
 
 typedef unsigned char byte;
@@ -36,5 +36,11 @@ void matrixTransposer(byte* data);
 long calculateOnBits(byte b);
 long calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize);
 void byteStuffer(byte * b, int size);
+
+void encryptVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte *vigKey);
+void decryptVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte *vigKey);
+void vigenereCipherEncryption(byte *bytes, byte *key);
+void vigenereCipherDecryption(byte *bytes, byte *key);
+void columnarTransposition(byte *bytes, byte *key);
 
 #endif

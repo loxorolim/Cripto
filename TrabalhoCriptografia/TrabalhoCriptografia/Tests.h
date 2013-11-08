@@ -12,12 +12,15 @@ void testGenerateRoundKeys();
 void testMixColumns();
 void testInverseMixColumns();
 
-void testeBoladoEBC(int mode);
+void testeBoladoECB(int mode);
 void testeBoladoCBC(int mode);
-void testeBoladoEBCDecrypt();
+void testeBoladoECBDecrypt();
 void testeBoladoCBCDecrypt();
 
-void imageEBCTest();
+void imageECBTest();
 void imageCBCTest();
+
+void vigenereEncryptionTest();
+void vigenereDecryptionTest();
 
 #endif
