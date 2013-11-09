@@ -1,6 +1,8 @@
 #ifndef TESTS_H
 #define TESTS_H
 
+
+
 void inverseSubBytesTest();
 
 void shiftRowsTest();
@@ -22,5 +24,7 @@ void imageCBCTest();
 
 void vigenereEncryptionTest();
 void vigenereDecryptionTest();
+
+
 
 #endif
