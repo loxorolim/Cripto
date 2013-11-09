@@ -60,9 +60,9 @@ byte valueOfChar(char c)
 }
 byte getValueFromChars(char* dupla)
 {
-	printf("%s\n", dupla);
+//	printf("%s\n",dupla);
 	byte ret = valueOfChar(dupla[0]) * 16 + valueOfChar(dupla[1]);
-	printf("%d", ret);
+//	printf("%d\n", ret);
 	return ret;
 
 }
@@ -85,20 +85,22 @@ byte* getKeyFromFile()
 
 				if (pos)
 				{
-					dupla[0] = c;
+					*dupla = c;
 					pos = !pos;
 				}
 				else
 				{
-					dupla[1] = c;
+					*(dupla + 1) = c;
+					*(dupla + 2) = '\0';
 					pos = !pos;
 					key[i] = getValueFromChars(dupla);
 					i++;
 				}
-				putchar(c);
+				//putchar(c);
 			
 			} 
 		}
+		*(key + 16) = '\0';
 		fclose(file);
 	}
 	return key;
@@ -122,20 +124,22 @@ byte* getIVFromFile()
 
 				if (pos)
 				{
-					dupla[0] = c;
+					*dupla = c;
 					pos = !pos;
 				}
 				else
 				{
-					dupla[1] = c;
+					*(dupla + 1) = c;
+					*(dupla + 2) = '\0';
 					pos = !pos;
 					iv[i] = getValueFromChars(dupla);
 					i++;
 				}
-				putchar(c);
+				//putchar(c);
 
 			}
 		}
+		*(iv + 16) = '\0';
 		fclose(file);
 	}
 	return iv;
@@ -143,9 +147,9 @@ byte* getIVFromFile()
 void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 {
 	byte *iv = getIVFromFile();
-	printf("%s\n", iv);
+	//printf("%d\n", iv);
 	byte *key = getKeyFromFile();
-	printf("%s\n", key);
+	//printf("%d\n", key);
 	
 	int tam = strlen(filepath);
 	char* addString;
@@ -290,7 +294,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//byte b1[] = {85};
 	//byte b2[] = {17};
 	//printf("%d", calculateHammingDistance(b1,b2,1));
-	interface();
+	//interface();
+	encryptAddRoundKeyTest();
 	system("pause");
 
 	return 0;
