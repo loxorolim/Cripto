@@ -10,3 +10,11 @@
 /TrabalhoCriptografia/TrabalhoCriptografia/Release
 
 /TrabalhoCriptografia/*.opensdf
+
+/TrabalhoCriptografia/*.suo
+
+/TrabalhoCriptografia/TrabalhoCriptografia/TrabalhoCriptografia.vcxproj.user
+
+*.db
+
+TrabalhoCriptografia.vcxproj.user

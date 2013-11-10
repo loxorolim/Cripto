@@ -1,8 +1,8 @@
 #include "AES.h"
-#include "stdafx.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string>
+#include <string.h>
+#include <stdbool.h>
 
 const byte sbox[] =
 // 0     1     2     3     4     5     6     7     8     9     A     B     C     D     E     F
@@ -479,7 +479,7 @@ void columnarTransposition(byte *bytes, byte *result, char *key, int dataSize){
 	for (int i = dataSize; i < resultSize; i++)
 		result[i] = 0x00;*/
 	int target = 0;
-	bool stop = false;
+	int stop = 0;
 	while (!stop){
 		for (int i = 0; i <= size; i++){
 			if (order[i] == target){
@@ -506,7 +506,7 @@ void columnarTransposition(byte *bytes, byte *result, char *key, int dataSize){
 			}
 		}
 		if (target >= size)
-			stop = true;
+			stop = 1;
 	}
 	//for (int i = 0; i < resultSize; i++)
 	//	printf("%c", *(result + i));
@@ -537,7 +537,7 @@ void inverseColumnarTransposition(byte *bytes, byte* result, char *key, int data
 	result[i] = 0x00;*/
 	int targetI = 0;
 	int target = order[targetI];
-	bool stop = false;
+	int stop = false;
 	while (!stop){
 		for (int i = 0; i <= size; i++){
 			if (inverseOrder[i] == target){

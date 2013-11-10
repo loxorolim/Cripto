@@ -35,7 +35,7 @@ void decryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* re
 void matrixTransposer(byte* data);
 long calculateOnBits(byte b);
 long calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize);
-void byteStuffer(byte * b, int size);
+//void byteStuffer(byte * b, int size);
 
 void vigenereCipherEncryption(byte *bytes, byte *key);
 void encryptBlockVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte *vigKey);
