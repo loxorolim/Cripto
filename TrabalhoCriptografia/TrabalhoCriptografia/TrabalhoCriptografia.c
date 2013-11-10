@@ -3,9 +3,8 @@
 #include "Tests.h"
 #include <stdlib.h>
 #include "Images.h"
-#include <string.h>
 #include <stdio.h>
-
+#include <string.h>
 
 #define ENCRYPT 1
 #define DECRYPT 0
@@ -297,6 +296,8 @@ int main(int argc, char* argv[])
 	//printf("%d", calculateHammingDistance(b1,b2,1));
 	interface();
 	//encryptAddRoundKeyTest();
+	/*columnarTranspositionTest();
+	inverseColumnarTranspositionTest();*/
 	system("pause");
 
 	return 0;

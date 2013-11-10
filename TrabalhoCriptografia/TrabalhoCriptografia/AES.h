@@ -45,7 +45,8 @@ void vigenereCipherDecryption(byte *bytes, byte *key);
 void decryptBlockVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte *vigKey);
 void decryptVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte *vigKey);
 
-void columnarTransposition(byte *bytes, byte *key);
+void columnarTransposition(byte *bytes, byte *result, char *key, int dataSize);
+void inverseColumnarTransposition(byte *bytes, byte *result, char *key, int dataSize);
 
 void encryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv);
 void decryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv);
