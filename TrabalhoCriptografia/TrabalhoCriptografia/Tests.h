@@ -26,6 +26,7 @@ void vigenereEncryptionTest();
 void vigenereDecryptionTest();
 
 void columnarTranspositionTest();
+void inverseColumnarTranspositionTest();
 
 void encryptAddRoundKeyTest();
 

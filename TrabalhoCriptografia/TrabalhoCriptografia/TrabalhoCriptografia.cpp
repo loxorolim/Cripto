@@ -297,6 +297,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//interface();
 	//encryptAddRoundKeyTest();
 	columnarTranspositionTest();
+	inverseColumnarTranspositionTest();
 	system("pause");
 
 	return 0;

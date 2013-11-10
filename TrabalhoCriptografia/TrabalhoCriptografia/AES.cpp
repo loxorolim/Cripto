@@ -457,21 +457,10 @@ byte* byteStuffer(byte * b, int size, int* newSize)
 
 }
 
-inline char ConvertHexNibble(char nibble)
-{
-	if (nibble >= '0' && nibble <= '9')
-		return nibble - '0';
-	else if (nibble >= 'A' && nibble <= 'F')
-		return nibble - 'A' + 10;
-	else if (nibble >= 'a' && nibble <= 'f')
-		return nibble - 'a' + 10;
-}
-
-void columnarTransposition(byte *bytes, char *key, int dataSize){
+void columnarTransposition(byte *bytes, byte *result, char *key, int dataSize){
 	int const size = strlen(key);
 	int* order = (int*)calloc(size, sizeof(int));
-	for (int i = 0; i < size; i++){
-		order[i] = 1;
+	for (int i = 0; i <= size; i++){
 		for (int j = 0; j < size; j++){
 			if ((key[i] == key[j] && i < j) || (key[i] > key[j]))
 				order[i]++;
@@ -480,29 +469,108 @@ void columnarTransposition(byte *bytes, char *key, int dataSize){
 	for (int i = 0; i < size; i++){
 		printf("%d", order[i]);
 	}
-	int residue = dataSize % size;
 	printf("\n");
-	int target = 1;
-	int rowsCount = (dataSize) / size;
+	int residue = dataSize % size;
+	int rowsCount = ceil((float)dataSize / (float)size);
+	int resultSize = rowsCount*size;
+	byte *column = (byte*)calloc(rowsCount, sizeof(byte));
+	/*for (int i = 0; i < dataSize; i++)
+		result[i] = bytes[i];
+	for (int i = dataSize; i < resultSize; i++)
+		result[i] = 0x00;*/
+	int target = 0;
 	bool stop = false;
 	while (!stop){
 		for (int i = 0; i <= size; i++){
 			if (order[i] == target){
-				for (int j = 0; j < rowsCount; j++){
-					printf("%c", *(bytes + i + j * size));
+				for (int j = 0; j <= rowsCount; j++){
+					if (i < residue)
+						*(result + target + j * size) = *(bytes + i + j * size);
+					else if (j < rowsCount -1)
+						*(result + target + j * size) = *(bytes + i + j * size);
+					else
+						*(result + target + j * size) = 0xFF;
+					/*int aux = order[i];
+					order[i] = order[target];
+					order[target] = aux;*/
 				}
-				if (i <= residue - 1)
-					printf("%c", *(bytes + i + rowsCount * size));
+				//if (i < residue){
+				//	*(result + target + rowsCount * size) = *(bytes + i + rowsCount * size);
+				//	/**(bytes + i + rowsCount * size) = *(bytes + target + rowsCount * size);
+				//	*(bytes + target + rowsCount * size) = column[rowsCount];*/
+				//} else {
+				//	*(result + target + rowsCount * size) = 0x00;
+				//}
 				target++;
 				break;
 			}
 		}
-		if (target > size)
+		if (target >= size)
 			stop = true;
 	}
-
+	//for (int i = 0; i < resultSize; i++)
+	//	printf("%c", *(result + i));
 }
 
+void inverseColumnarTransposition(byte *bytes, byte* result, char *key, int dataSize){
+	int const size = strlen(key);
+	int* order = (int*)calloc(size, sizeof(int));
+	int* inverseOrder = (int*)calloc(size, sizeof(int));
+	for (int i = 0; i <= size; i++){
+		inverseOrder[i] = i;
+		for (int j = 0; j < size; j++){
+			if ((key[i] == key[j] && i < j) || (key[i] > key[j]))
+				order[i]++;
+		}
+	}
+	for (int i = 0; i < size; i++){
+		printf("%d", order[i]);
+	}
+	printf("\n");
+	int residue = dataSize % size;
+	int rowsCount = ceil((float)dataSize / (float)size);
+	int resultSize = rowsCount*size;
+	byte *column = (byte*)calloc(rowsCount, sizeof(byte));
+	/*for (int i = 0; i < dataSize; i++)
+	result[i] = bytes[i];
+	for (int i = dataSize; i < resultSize; i++)
+	result[i] = 0x00;*/
+	int targetI = 0;
+	int target = order[targetI];
+	bool stop = false;
+	while (!stop){
+		for (int i = 0; i <= size; i++){
+			if (inverseOrder[i] == target){
+				for (int j = 0; j <= rowsCount; j++){
+					if (i < residue && targetI)
+						*(result + targetI + j * size) = *(bytes + i + j * size);
+					else// if (j < rowsCount - 1)
+						*(result + targetI + j * size) = *(bytes + i + j * size);
+					//else
+					//	*(result + target + j * size) = 0xFF;
+					/*int aux = order[i];
+					order[i] = order[target];
+					order[target] = aux;*/
+				}
+				//if (i < residue){
+				//	*(result + target + rowsCount * size) = *(bytes + i + rowsCount * size);
+				//	/**(bytes + i + rowsCount * size) = *(bytes + target + rowsCount * size);
+				//	*(bytes + target + rowsCount * size) = column[rowsCount];*/
+				//} else {
+				//	*(result + target + rowsCount * size) = 0x00;
+				//}
+				targetI++;
+				target = order[targetI];
+				break;
+			}
+		}
+		if (targetI >= size)
+			stop = true;
+	}
+	printMatrix(result);
+	//for (int i = 0; i < resultSize; i++)
+	//	printf("%c", *(result + i));
+}
 void vigenereCipherEncryption(byte *bytes, byte *key){
 	for (int i = 0; i < 16; i++)
 		bytes[i] = (bytes[i] + key[i]) % 256;
