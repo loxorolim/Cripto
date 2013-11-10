@@ -25,6 +25,8 @@ void imageCBCTest();
 void vigenereEncryptionTest();
 void vigenereDecryptionTest();
 
+void columnarTranspositionTest();
+
 void encryptAddRoundKeyTest();
 
 

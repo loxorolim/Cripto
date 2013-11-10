@@ -295,7 +295,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//byte b2[] = {17};
 	//printf("%d", calculateHammingDistance(b1,b2,1));
 	//interface();
-	encryptAddRoundKeyTest();
+	//encryptAddRoundKeyTest();
+	columnarTranspositionTest();
 	system("pause");
 
 	return 0;

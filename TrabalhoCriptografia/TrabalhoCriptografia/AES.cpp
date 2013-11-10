@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 
 const byte sbox[] =
 // 0     1     2     3     4     5     6     7     8     9     A     B     C     D     E     F
@@ -453,6 +454,52 @@ byte* byteStuffer(byte * b, int size, int* newSize)
 	}
 	*newSize =  size + toStuff;
 	return newBytes;
+
+}
+
+inline char ConvertHexNibble(char nibble)
+{
+	if (nibble >= '0' && nibble <= '9')
+		return nibble - '0';
+	else if (nibble >= 'A' && nibble <= 'F')
+		return nibble - 'A' + 10;
+	else if (nibble >= 'a' && nibble <= 'f')
+		return nibble - 'a' + 10;
+}
+
+void columnarTransposition(byte *bytes, char *key, int dataSize){
+	int const size = strlen(key);
+	int* order = (int*)calloc(size, sizeof(int));
+	for (int i = 0; i < size; i++){
+		order[i] = 1;
+		for (int j = 0; j < size; j++){
+			if ((key[i] == key[j] && i < j) || (key[i] > key[j]))
+				order[i]++;
+		}
+	}
+	for (int i = 0; i < size; i++){
+		printf("%d", order[i]);
+	}
+	int residue = dataSize % size;
+	printf("\n");
+	int target = 1;
+	int rowsCount = (dataSize) / size;
+	bool stop = false;
+	while (!stop){
+		for (int i = 0; i <= size; i++){
+			if (order[i] == target){
+				for (int j = 0; j < rowsCount; j++){
+					printf("%c", *(bytes + i + j * size));
+				}
+				if (i <= residue - 1)
+					printf("%c", *(bytes + i + rowsCount * size));
+				target++;
+				break;
+			}
+		}
+		if (target > size)
+			stop = true;
+	}
 
 }
 
