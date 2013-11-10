@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
+//#include <stdbool.h>
+#include <math.h>
 
 const byte sbox[] =
 // 0     1     2     3     4     5     6     7     8     9     A     B     C     D     E     F
@@ -457,7 +458,7 @@ byte* byteStuffer(byte * b, int size, int* newSize)
 
 }
 
-void columnarTransposition(byte *bytes, byte *result, char *key, int dataSize){
+void columnarTransposition(byte *bytes, char *key, int dataSize){
 	int const size = strlen(key);
 	int* order = (int*)calloc(size, sizeof(int));
 	for (int i = 0; i <= size; i++){
@@ -466,41 +467,29 @@ void columnarTransposition(byte *bytes, byte *result, char *key, int dataSize){
 				order[i]++;
 		}
 	}
-	for (int i = 0; i < size; i++){
-		printf("%d", order[i]);
-	}
-	printf("\n");
+	//for (int i = 0; i < size; i++){
+	//	printf("%d", order[i]);
+	//}
+	//printf("\n");
 	int residue = dataSize % size;
 	int rowsCount = ceil((float)dataSize / (float)size);
-	int resultSize = rowsCount*size;
-	byte *column = (byte*)calloc(rowsCount, sizeof(byte));
-	/*for (int i = 0; i < dataSize; i++)
-		result[i] = bytes[i];
-	for (int i = dataSize; i < resultSize; i++)
-		result[i] = 0x00;*/
+	int resultSize = size * rowsCount;
+
+	byte* result = (byte*)calloc(resultSize, sizeof(byte));
+
 	int target = 0;
 	int stop = 0;
 	while (!stop){
-		for (int i = 0; i <= size; i++){
+		for (int i = 0; i < size; i++){
 			if (order[i] == target){
-				for (int j = 0; j <= rowsCount; j++){
-					if (i < residue)
-						*(result + target + j * size) = *(bytes + i + j * size);
-					else if (j < rowsCount -1)
-						*(result + target + j * size) = *(bytes + i + j * size);
+				for (int j = 0; j < rowsCount; j++){
+					if (j < rowsCount-1 || residue == 0)
+						result[target + j * size] = bytes[i + j * size];
+					else if (i < residue)
+						result[target + j * size] = bytes[i + j * size];
 					else
-						*(result + target + j * size) = 0xFF;
-					/*int aux = order[i];
-					order[i] = order[target];
-					order[target] = aux;*/
+						result[target + j * size] = 0xFF;
 				}
-				//if (i < residue){
-				//	*(result + target + rowsCount * size) = *(bytes + i + rowsCount * size);
-				//	/**(bytes + i + rowsCount * size) = *(bytes + target + rowsCount * size);
-				//	*(bytes + target + rowsCount * size) = column[rowsCount];*/
-				//} else {
-				//	*(result + target + rowsCount * size) = 0x00;
-				//}
 				target++;
 				break;
 			}
@@ -508,75 +497,60 @@ void columnarTransposition(byte *bytes, byte *result, char *key, int dataSize){
 		if (target >= size)
 			stop = 1;
 	}
-	//for (int i = 0; i < resultSize; i++)
-	//	printf("%c", *(result + i));
+	free(order);
+	memcpy(bytes, result, resultSize);
+	free(result);
 }
 
-void inverseColumnarTransposition(byte *bytes, byte* result, char *key, int dataSize){
+void inverseColumnarTransposition(byte *bytes, char *key, int dataSize){
 	int const size = strlen(key);
 	int* order = (int*)calloc(size, sizeof(int));
-	int* inverseOrder = (int*)calloc(size, sizeof(int));
 	for (int i = 0; i <= size; i++){
-		inverseOrder[i] = i;
 		for (int j = 0; j < size; j++){
 			if ((key[i] == key[j] && i < j) || (key[i] > key[j]))
 				order[i]++;
 		}
 	}
-	for (int i = 0; i < size; i++){
-		printf("%d", order[i]);
-	}
-	printf("\n");
+	//for (int i = 0; i < size; i++){
+	//	printf("%d", order[i]);
+	//}
+	//printf("\n");
 	int residue = dataSize % size;
-	int rowsCount = ceil((float)dataSize / (float)size);
-	int resultSize = rowsCount*size;
-	byte *column = (byte*)calloc(rowsCount, sizeof(byte));
-	/*for (int i = 0; i < dataSize; i++)
-	result[i] = bytes[i];
-	for (int i = dataSize; i < resultSize; i++)
-	result[i] = 0x00;*/
+	int keyLen = strlen(key);
+	int rowsCount = ceil((float)dataSize / (float)keyLen);
+	int resultSize = keyLen * rowsCount;
+
+	byte* result = (byte*)calloc(resultSize, sizeof(byte));
 	int targetI = 0;
 	int target = order[targetI];
-	int stop = false;
+	int stop = 0;
 	while (!stop){
-		for (int i = 0; i <= size; i++){
-			if (inverseOrder[i] == target){
-				for (int j = 0; j <= rowsCount; j++){
+		for (int i = 0; i < size; i++){
+			if (i == target){
+				for (int j = 0; j < rowsCount; j++){
 					if (i < residue && targetI)
 						*(result + targetI + j * size) = *(bytes + i + j * size);
-					else// if (j < rowsCount - 1)
+					else
 						*(result + targetI + j * size) = *(bytes + i + j * size);
-					//else
-					//	*(result + target + j * size) = 0xFF;
-					/*int aux = order[i];
-					order[i] = order[target];
-					order[target] = aux;*/
 				}
-				//if (i < residue){
-				//	*(result + target + rowsCount * size) = *(bytes + i + rowsCount * size);
-				//	/**(bytes + i + rowsCount * size) = *(bytes + target + rowsCount * size);
-				//	*(bytes + target + rowsCount * size) = column[rowsCount];*/
-				//} else {
-				//	*(result + target + rowsCount * size) = 0x00;
-				//}
 				targetI++;
 				target = order[targetI];
 				break;
 			}
 		}
 		if (targetI >= size)
-			stop = true;
+			stop = 1;
 	}
-	printMatrix(result);
-	//for (int i = 0; i < resultSize; i++)
-	//	printf("%c", *(result + i));
+	free(order);
+	memcpy(bytes, result, resultSize);
+	free(result);
 }
 void vigenereCipherEncryption(byte *bytes, byte *key){
 	for (int i = 0; i < 16; i++)
 		bytes[i] = (bytes[i] + key[i]) % 256;
 }
 
-void encryptBlockVigenere(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type, byte *vigKey)
+void encryptBlockAlternative(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type, byte *vigKey, char *transKey)
 {
 	if (type == CBC)
 		xor(data, *toXor, result);
@@ -589,23 +563,24 @@ void encryptBlockVigenere(byte* data, byte** allKeys, int rounds, byte** toXor, 
 	//demais rounds
 	for (int i = 1; i < rounds; i++)
 	{
-		vigenereCipherEncryption(result, vigKey);
-		shiftRows(result);
-		mixColumns(result);
+			vigenereCipherEncryption(result, vigKey);
+			columnarTransposition(result, transKey, 16);
+			//shiftRows(result);
+			//mixColumns(result);
 
-		addRoundKey(result, 0, allKeys[i]);
+			addRoundKey(result, 0, allKeys[i]);
 	}
 
 	//Último round
 	vigenereCipherEncryption(result, vigKey);
-	shiftRows(result);
+	//shiftRows(result);
 	addRoundKey(result, 0, allKeys[rounds]);
 
 	if (type == CBC) // SE CBC
 		*toXor = result;
 }
 
-void encryptVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte *vigKey){
+void encryptAlternative(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte *vigKey, char *transKey){
 	matrixTransposer(key);
 	matrixTransposer(vigKey);
 
@@ -624,7 +599,7 @@ void encryptVigenere(byte * data, int dataSize, byte * key, byte * result, int r
 	for (int i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
-		encryptBlockVigenere(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type, vigKey);
+		encryptBlockAlternative(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type, vigKey, transKey);
 	}
 
 	//transpor os dados de volta ===============================================================
@@ -651,20 +626,19 @@ void vigenereCipherDecryption(byte *bytes, byte *key){
 		bytes[i] = (bytes[i] - key[i]) % 256;
 }
 
-void decryptBlockVigenere(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type, byte* vigKey)
+void decryptBlockAlternative(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type, byte* vigKey, char* transKey)
 {
 	memcpy(result, data, 16 * sizeof(byte));
+	int dataSize = sizeof(result) / sizeof(*result);
 
 	//Primeiro round
 	addRoundKey(result, 0, allKeys[rounds]);
-	inverseShiftRows(result);
 	vigenereCipherDecryption(result, vigKey);
 
 	//demais rounds
 	for (int i = rounds - 1; i >= 1; i--){
 		addRoundKey(result, 0, allKeys[i]);
-		inverseMixColumns(result);
-		inverseShiftRows(result);
+		inverseColumnarTransposition(result, transKey, 16);
 		vigenereCipherDecryption(result, vigKey);
 	}
 
@@ -677,7 +651,7 @@ void decryptBlockVigenere(byte* data, byte** allKeys, int rounds, byte** toXor, 
 	}
 }
 
-void decryptVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte* vigKey)
+void decryptAlternative(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte* vigKey, char* transKey)
 {
 	matrixTransposer(key);
 	matrixTransposer(vigKey);
@@ -697,7 +671,7 @@ void decryptVigenere(byte * data, int dataSize, byte * key, byte * result, int r
 	for (int i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
-		decryptBlockVigenere(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type, vigKey);
+		decryptBlockAlternative(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type, vigKey, transKey);
 	}
 
 	for (int i = 0; i < dataSize / 16; i++)

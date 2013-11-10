@@ -22,8 +22,8 @@ void testeBoladoCBCDecrypt();
 void imageECBTest();
 void imageCBCTest();
 
-void vigenereEncryptionTest();
-void vigenereDecryptionTest();
+void alternativeEncryptionTest();
+void alternativeDecryptionTest();
 
 void columnarTranspositionTest();
 void inverseColumnarTranspositionTest();
