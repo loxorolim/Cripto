@@ -3,6 +3,7 @@
 #include "Images.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 
 void shiftRowsTest(){
 	byte mat[] = {
@@ -253,6 +254,45 @@ void vigenereDecryptionTest(){
 		printMatrix(result + i * 16);
 	}
 }
+
+void columnarTranspositionTest(){
+	byte inputData[16] = { 0x4f, 0x6c, 0x61, 0x20, 0x74, 0x75, 0x64, 0x6f, 0x20, 0x62, 0x65, 0x6d, 0x20, 0x63, 0x6f, 0x6d };
+	printMatrix(inputData);
+	for (int i = 0; i < sizeof(inputData); i++)
+		printf("%c", *(inputData + i));
+	printf("\n");
+	char* key = "CARLOS";
+	int keyLen = strlen(key);
+	int dataSize = sizeof(inputData) / sizeof(*inputData);
+	int rowsCount = ceil((float)dataSize / (float)keyLen);
+	int resultSize = keyLen * rowsCount;
+
+	byte* result = (byte*)calloc(resultSize, sizeof(byte));
+	columnarTransposition(inputData, result, key, dataSize);
+	for (int i = 0; i < resultSize; i++)
+		printf("%x", *(result + i));
+}
+
+void inverseColumnarTranspositionTest(){
+	byte inputData[18] = { 0x6c, 0x4f, 0x20, 0x74, 0x61, 0x75, 0x6f, 0x64, 0x62, 0x65, 0x20, 0x6d, 0x63, 0x20, 0x6d, 0xff, 0x6f, 0xff };
+	printMatrix(inputData);
+	for (int i = 0; i < sizeof(inputData); i++)
+		printf("%c", *(inputData + i));
+	printf("\n");
+	char* key = "CARLOS";
+	int keyLen = strlen(key);
+	int dataSize = sizeof(inputData) / sizeof(*inputData);
+	int rowsCount = ceil((float)dataSize / (float)keyLen);
+	int resultSize = keyLen * rowsCount;
+
+	byte* resultInverse = (byte*)calloc(dataSize, sizeof(byte));
+	inverseColumnarTransposition(inputData, resultInverse, key, resultSize);
+	for (int i = 0; i < dataSize; i++)
+	if (resultInverse[i] != 0xff)
+		printf("%c", *(resultInverse + i));
+	printf("%d", sizeof(resultInverse));
+}
+
 void encryptAddRoundKeyTest()
 {
 	byte originalKey[] = {
