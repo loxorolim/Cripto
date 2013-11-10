@@ -1,10 +1,11 @@
 // TrabalhoCriptografia.cpp : Defines the entry point for the console application.
 //
-#include "stdafx.h"
 #include "Tests.h"
 #include <stdlib.h>
 #include "Images.h"
-//#include <IL/il.h>
+#include <string.h>
+#include <stdio.h>
+
 
 #define ENCRYPT 1
 #define DECRYPT 0
@@ -72,7 +73,7 @@ byte* getKeyFromFile()
 	FILE * file;
 	char c;
 	char* dupla = (char*)malloc(2 * sizeof(char));
-	bool pos = true;
+	int pos = 1;
 	int i = 0;
 	file = fopen("key.txt", "r");
 	if (file)
@@ -111,7 +112,7 @@ byte* getIVFromFile()
 	FILE * file;
 	char c;
 	char* dupla = (char*)malloc(2 * sizeof(char));
-	bool pos = true;
+	int pos = 1;
 	int i = 0;
 	file = fopen("iv.txt", "r");
 	if (file)
@@ -267,7 +268,7 @@ void interface()
 }
 
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
 	//ilInit();
 	//ilEnable(IL_FILE_OVERWRITE);
@@ -294,8 +295,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//byte b1[] = {85};
 	//byte b2[] = {17};
 	//printf("%d", calculateHammingDistance(b1,b2,1));
-	//interface();
-	encryptAddRoundKeyTest();
+	interface();
+	//encryptAddRoundKeyTest();
 	system("pause");
 
 	return 0;

@@ -1,7 +1,7 @@
 #include "AES.h"
-#include "stdafx.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 const byte sbox[] =
 // 0     1     2     3     4     5     6     7     8     9     A     B     C     D     E     F
@@ -240,13 +240,13 @@ void makeRoundKey(int roundCount, byte **allKeys)
 			byte rotatedColumn[] = { oldColumn[1], oldColumn[2], oldColumn[3], oldColumn[0] };
 			subBytes(rotatedColumn, 4);
 
-			for (int i = 0; i < 4; i++){
+			for (i = 0; i < 4; i++){
 				byte rconValue = i == 0 ? rcon[roundCount] : 0;
 				lastColumn[i] = currentKey[i * 4 + j] = lastKey[i * 4 + j] ^ rotatedColumn[i] ^ rconValue;
 			}
 		}
 		else {
-			for (int i = 0; i < 4; i++)
+			for (i = 0; i < 4; i++)
 				lastColumn[i] = currentKey[i * 4 + j] = lastKey[i * 4 + j] ^ lastColumn[i];
 		}
 	}
@@ -439,22 +439,22 @@ long calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize)
 	}
 	return dist;
 }
-byte* byteStuffer(byte * b, int size, int* newSize)
-{
-	int toStuff = size % 16;
-	byte *newBytes = (byte*)calloc(size + toStuff, sizeof(byte*));
-	memcpy(newBytes,b,size*sizeof(byte));
-	if(toStuff != 0)
-	{
-		for(int i = 1; i <= toStuff;i++)
-		{
-			newBytes[size+i] = 0;
-		}
-	}
-	*newSize =  size + toStuff;
-	return newBytes;
-
-}
+//byte* byteStuffer(byte * b, int size, int* newSize)
+//{
+//	int toStuff = size % 16;
+//	byte *newBytes = (byte*)calloc(size + toStuff, sizeof(byte*));
+//	memcpy(newBytes,b,size*sizeof(byte));
+//	if(toStuff != 0)
+//	{
+//		for(int i = 1; i <= toStuff;i++)
+//		{
+//			newBytes[size+i] = 0;
+//		}
+//	}
+//	*newSize =  size + toStuff;
+//	return newBytes;
+//
+//}
 
 void vigenereCipherEncryption(byte *bytes, byte *key){
 	for (int i = 0; i < 16; i++)

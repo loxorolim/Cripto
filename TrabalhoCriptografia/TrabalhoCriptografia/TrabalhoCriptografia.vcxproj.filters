@@ -18,13 +18,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="aes.h">
+    <ClInclude Include="AES.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tests.h">
@@ -35,19 +29,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="TrabalhoCriptografia.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TrabalhoCriptografia.cpp">
+    <ClCompile Include="AES.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AES.cpp">
+    <ClCompile Include="Tests.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Images.cpp">
+    <ClCompile Include="Images.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

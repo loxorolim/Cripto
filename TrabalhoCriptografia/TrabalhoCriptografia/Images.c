@@ -1,7 +1,8 @@
-#include "aes.h"
+#include "AES.h"
 #include "Images.h"
 #include <IL/il.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef void(*CryptFunc)(byte*, int, byte*, byte*, int, int, byte*);
 
