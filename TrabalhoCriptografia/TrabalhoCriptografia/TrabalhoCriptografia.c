@@ -5,6 +5,7 @@
 #include "Images.h"
 #include <stdio.h>
 #include <string.h>
+#include <IL/il.h>
 
 #define ENCRYPT 1
 #define DECRYPT 0
@@ -269,10 +270,10 @@ void interface()
 
 int main(int argc, char* argv[])
 {
-	//ilInit();
-	//ilEnable(IL_FILE_OVERWRITE);
-	//ilEnable(IL_ORIGIN_SET);
-	//ilOriginFunc(IL_ORIGIN_UPPER_LEFT);
+	ilInit();
+	ilEnable(IL_FILE_OVERWRITE);
+	ilEnable(IL_ORIGIN_SET);
+	ilOriginFunc(IL_ORIGIN_UPPER_LEFT);
 	//shiftRowsTest();
 	//addRoundKeyTest();
 	//testMixColumns();
