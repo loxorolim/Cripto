@@ -472,7 +472,7 @@ void columnarTransposition(byte *bytes, char *key, int dataSize){
 	//}
 	//printf("\n");
 	int residue = dataSize % size;
-	int rowsCount = ceil((float)dataSize / (float)size);
+	int rowsCount = (int)ceil((float)dataSize / (float)size);
 	int resultSize = size * rowsCount;
 
 	byte* result = (byte*)calloc(resultSize, sizeof(byte));
@@ -517,7 +517,7 @@ void inverseColumnarTransposition(byte *bytes, char *key, int dataSize){
 	//printf("\n");
 	int residue = dataSize % size;
 	int keyLen = strlen(key);
-	int rowsCount = ceil((float)dataSize / (float)keyLen);
+	int rowsCount = (int)ceil((float)dataSize / (float)keyLen);
 	int resultSize = keyLen * rowsCount;
 
 	byte* result = (byte*)calloc(resultSize, sizeof(byte));
