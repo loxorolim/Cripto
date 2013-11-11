@@ -270,10 +270,11 @@ void interface()
 
 int main(int argc, char* argv[])
 {
-	/*ilInit();
-	ilEnable(IL_FILE_OVERWRITE);
-	ilEnable(IL_ORIGIN_SET);
-	ilOriginFunc(IL_ORIGIN_UPPER_LEFT);*/
+	ilInit();                                //inicializa biblioteca de imagens
+	ilEnable(IL_FILE_OVERWRITE);             //permite que a biblioteca sobrescreva arquivos em disco
+	ilEnable(IL_ORIGIN_SET);                 //define a origem das imagens como o canto superior esquerdo
+	ilOriginFunc(IL_ORIGIN_UPPER_LEFT);
+
 	//shiftRowsTest();
 	//addRoundKeyTest();
 	//testMixColumns();
@@ -288,14 +289,14 @@ int main(int argc, char* argv[])
 	//system("pause");
 	//imageECBTest();
 	//imageCBCTest();
-	alternativeEncryptionTest();
-	alternativeDecryptionTest();
+	//alternativeEncryptionTest();
+	//alternativeDecryptionTest();
 	//inverseSubBytesTest();
 	//testInverseMixColumns();
 	//byte b1[] = {85};
 	//byte b2[] = {17};
 	//printf("%d", calculateHammingDistance(b1,b2,1));
-	//interface();
+	interface();
 	//encryptAddRoundKeyTest();
 	//columnarTranspositionTest();
 	//inverseColumnarTranspositionTest();

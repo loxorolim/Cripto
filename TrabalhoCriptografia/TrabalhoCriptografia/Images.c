@@ -12,52 +12,34 @@ static void printData(byte* data, int size){
 }
 
 static void process(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type, CryptFunc f){
-	ILuint srcID = ilGenImage();
-	ilBindImage(srcID);
-	ilLoadImage(srcFile);
+	ILuint srcID = ilGenImage();               //gera a imagem de origem
+	ilBindImage(srcID);                        //manda trabalhar com essa imagem
+	ilLoadImage(srcFile);                      //carrega a imagem de origem do arquivo
 
-	int width = ilGetInteger(IL_IMAGE_WIDTH);
-	int height = ilGetInteger(IL_IMAGE_HEIGHT);
-	int bpp = ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL);
-	printf("Bpp: %d\n", bpp);
+	int width = ilGetInteger(IL_IMAGE_WIDTH);            //obtém largura da imagem
+	int height = ilGetInteger(IL_IMAGE_HEIGHT);          //obtém altura da imagem
+	int bpp = ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL);    //obtém taxa de "bytes per pixel" da imagem
 
-	int size = width * height * bpp;
-	printf("Image width %d, height %d size: %d\n", width, height, size);
+	int size = width * height * bpp;                     //calcula tamanho de bytes na imagem
 
-	//byte *originalData = ilGetData();
-	byte *originalData = (byte*)calloc(size, sizeof(byte));
-	byte *result = (byte*)calloc(size, sizeof(byte));
-	ilCopyPixels(0, 0, 0, width, height, 1, IL_RGB, IL_UNSIGNED_BYTE, originalData);
+	byte *originalData = (byte*)calloc(size, sizeof(byte)); //aloca espaço para uma cópia dos pixels originais
+	byte *result = (byte*)calloc(size, sizeof(byte));       //aloca os pixels da imagem resultado
+	ilCopyPixels(0, 0, 0, width, height, 1, IL_RGB, IL_UNSIGNED_BYTE, originalData);    //obtém uma cópia dos pixels originais
 
-	f(originalData, size, key, result, rounds, type, iv);
+	f(originalData, size, key, result, rounds, type, iv);   //aplica o processo desejado
 
-	ILuint destID = ilGenImage();
-	ilBindImage(destID);
-	//ilTexImage(width, height, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, originalData);
-	//ilTexImage(width, height, 1, bpp, IL_RGB, IL_UNSIGNED_BYTE, result);
-	//ilSetPixels(0, 0, 0, width, height, 1, IL_RGB, IL_UNSIGNED_BYTE, result);
-	//ilSetPixels(0, 0, 0, width, height, 1, IL_RGB, IL_UNSIGNED_BYTE, originalData);
-	ilLoadDataL(result, size, width, height, 1, bpp);
-	//ilLoadDataL(originalData, size, width, height, 1, 3);
+	ILuint destID = ilGenImage();                           //gera imagem resultante
+	ilBindImage(destID);                                    //manda usar essa imagem
+	ilLoadDataL(result, size, width, height, 1, bpp);       //preenche a imagem resultante com os pixels calculados
 	
-	
-	ilSaveImage(destFile);
+	ilSaveImage(destFile);                                  //salva a imagem resultante em disco
 
 	
-	ilDeleteImage(srcID);
+	ilDeleteImage(srcID);                                   //apaga as duas imagens
 	ilDeleteImage(destID);
 
-	printf("Encrypted\n");
-	//printData(originalData, size);
-		
-	
-	printf("\nTo\n");
-	//printData(result, size);
-	free(result);
+	free(result);                                           //libera a memória dos pixels processados
 	free(originalData);
-
-
-	printf("\n\n");
 }
 
 

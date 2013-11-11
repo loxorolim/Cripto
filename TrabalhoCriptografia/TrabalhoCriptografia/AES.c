@@ -242,13 +242,13 @@ void makeRoundKey(int roundCount, byte **allKeys)
 			byte rotatedColumn[] = { oldColumn[1], oldColumn[2], oldColumn[3], oldColumn[0] };
 			subBytes(rotatedColumn, 4);
 
-			for (int i = 0; i < 4; i++){
+			for (i = 0; i < 4; i++){
 				byte rconValue = i == 0 ? rcon[roundCount] : 0;
 				lastColumn[i] = currentKey[i * 4 + j] = lastKey[i * 4 + j] ^ rotatedColumn[i] ^ rconValue;
 			}
 		}
 		else {
-			for (int i = 0; i < 4; i++)
+			for (i = 0; i < 4; i++)
 				lastColumn[i] = currentKey[i * 4 + j] = lastKey[i * 4 + j] ^ lastColumn[i];
 		}
 	}
