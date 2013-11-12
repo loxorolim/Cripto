@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <IL/il.h>
+#include <locale.h>
 
 #define ENCRYPT 1
 #define DECRYPT 0
@@ -270,6 +271,8 @@ void interface()
 
 int main(int argc, char* argv[])
 {
+	setlocale(LC_ALL, "Portuguese");
+
 	ilInit();                                //inicializa biblioteca de imagens
 	ilEnable(IL_FILE_OVERWRITE);             //permite que a biblioteca sobrescreva arquivos em disco
 	ilEnable(IL_ORIGIN_SET);                 //define a origem das imagens como o canto superior esquerdo
