@@ -54,4 +54,7 @@ void decryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, in
 void decryptBlockAddRoundKey(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type);
 void encryptBlockAddRoundKey(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type);
 
+void encryptAlternative(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv);
+void decryptAlternative(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv);
+
 #endif

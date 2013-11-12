@@ -11,7 +11,7 @@ static void printData(byte* data, int size){
 		printf("%2x ", data[i]);
 }
 
-static void process(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type, CryptFunc f){
+void process(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type, CryptFunc f){
 	ILuint srcID = ilGenImage();               //gera a imagem de origem
 	ilBindImage(srcID);                        //manda trabalhar com essa imagem
 	ilLoadImage(srcFile);                      //carrega a imagem de origem do arquivo

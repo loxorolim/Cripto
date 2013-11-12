@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <IL/il.h>
-#include <locale.h>
 
 #define ENCRYPT 1
 #define DECRYPT 0
@@ -109,65 +108,6 @@ byte* getKeyFromFile()
 	}
 	return key;
 }
-char* getTransKeyFromFile()
-{
-	char* key = (char*)malloc(4 * sizeof(char));
-	FILE * file;
-	char c;
-
-	file = fopen("transkey.txt", "r");
-	int i = 0;
-	if (file)
-	{
-		while ((c = getc(file)) != EOF)
-		{
-			*(key + i) = c;	
-			i++;
-		}
-		*(key + 4) = '\0';
-		fclose(file);
-	}
-	return key;
-}
-byte* getVigKeyFromFile()
-{
-	byte* key = (byte*)malloc(16 * sizeof(byte));
-	FILE * file;
-	char c;
-	char* dupla = (char*)malloc(2 * sizeof(char));
-	int pos = 1;
-	int i = 0;
-	file = fopen("vigkey.txt", "r");
-	if (file)
-	{
-		while ((c = getc(file)) != EOF)
-		{
-
-			if (c != ' ')
-			{
-
-				if (pos)
-				{
-					*dupla = c;
-					pos = !pos;
-				}
-				else
-				{
-					*(dupla + 1) = c;
-					*(dupla + 2) = '\0';
-					pos = !pos;
-					key[i] = getValueFromChars(dupla);
-					i++;
-				}
-				//putchar(c);
-
-			}
-		}
-		*(key + 16) = '\0';
-		fclose(file);
-	}
-	return key;
-}
 byte* getIVFromFile()
 {
 	byte* iv = (byte*)malloc(16 * sizeof(byte));
@@ -209,7 +149,7 @@ byte* getIVFromFile()
 }
 void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 {
-	getTransKeyFromFile();
+	//getTransKeyFromFile();
 	byte *iv = getIVFromFile();
 	//printf("%d\n", iv);
 	byte *key = getKeyFromFile();
@@ -247,7 +187,8 @@ void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 			if (cript == 2)
 				process(filepath, destFile, key, rounds, NULL, ECB,encrypt);
 			//AES MODIFICADO
-			//if (cript == 3)
+			if (cript == 3)
+				process(filepath, destFile, key, rounds, NULL, ECB, encryptAlternative);
 
 		}
 		//CBC
@@ -260,7 +201,8 @@ void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 			if (cript == 2)
 				process(filepath, destFile, key, rounds, iv, CBC,encrypt);
 			//AES MODIFICADO
-			//if (cript == 3)
+			if (cript == 3)
+				process(filepath, destFile, key, rounds, iv, CBC, encryptAlternative);
 		}
 	}
 	//DECRIPTOGRAFAR
@@ -274,7 +216,8 @@ void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 				process(filepath, destFile, key, rounds, NULL, ECB, decryptAddRoundKey);
 			if (cript == 2)
 				process(filepath, destFile, key, rounds, NULL, ECB,decrypt);
-			//	if (cript == 3)
+			if (cript == 3)
+				process(filepath, destFile, key, rounds, NULL, ECB, decryptAlternative);
 
 		}
 		//CBC
@@ -284,6 +227,9 @@ void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 				process(filepath, destFile, key, rounds, iv, CBC, decryptAddRoundKey);
 			if (cript == 2)
 				process(filepath, destFile, key, rounds, iv, CBC, decrypt);
+			if (cript == 3)
+				process(filepath, destFile, key, rounds, iv, CBC, decryptAlternative);
+
 		}
 	}
 
@@ -334,8 +280,6 @@ void interface()
 
 int main(int argc, char* argv[])
 {
-	setlocale(LC_ALL, "Portuguese");
-
 	ilInit();                                //inicializa biblioteca de imagens
 	ilEnable(IL_FILE_OVERWRITE);             //permite que a biblioteca sobrescreva arquivos em disco
 	ilEnable(IL_ORIGIN_SET);                 //define a origem das imagens como o canto superior esquerdo
@@ -362,6 +306,7 @@ int main(int argc, char* argv[])
 	//byte b1[] = {85};
 	//byte b2[] = {17};
 	//printf("%d", calculateHammingDistance(b1,b2,1));
+	while (1)
 	interface();
 	//encryptAddRoundKeyTest();
 	//columnarTranspositionTest();

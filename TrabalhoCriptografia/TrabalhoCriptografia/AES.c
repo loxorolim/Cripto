@@ -2,9 +2,69 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 //#include <stdbool.h>
 #include <math.h>
 
+char* getTransKeyFromFile()
+{
+	char* key = (char*)malloc(4 * sizeof(char));
+	FILE * file;
+	char c;
+
+	file = fopen("transkey.txt", "r");
+	int i = 0;
+	if (file)
+	{
+		while ((c = getc(file)) != EOF)
+		{
+			*(key + i) = c;
+			i++;
+		}
+		*(key + 4) = '\0';
+		fclose(file);
+	}
+	return key;
+}
+byte* getVigKeyFromFile()
+{
+	byte* key = (byte*)malloc(16 * sizeof(byte));
+	FILE * file;
+	char c;
+	char* dupla = (char*)malloc(2 * sizeof(char));
+	int pos = 1;
+	int i = 0;
+	file = fopen("vigkey.txt", "r");
+	if (file)
+	{
+		while ((c = getc(file)) != EOF)
+		{
+
+			if (c != ' ')
+			{
+
+				if (pos)
+				{
+					*dupla = c;
+					pos = !pos;
+				}
+				else
+				{
+					*(dupla + 1) = c;
+					*(dupla + 2) = '\0';
+					pos = !pos;
+					key[i] = getValueFromChars(dupla);
+					i++;
+				}
+				//putchar(c);
+
+			}
+		}
+		*(key + 16) = '\0';
+		fclose(file);
+	}
+	return key;
+}
 const byte sbox[] =
 // 0     1     2     3     4     5     6     7     8     9     A     B     C     D     E     F
 { 0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76, //0
@@ -580,7 +640,50 @@ void encryptBlockAlternative(byte* data, byte** allKeys, int rounds, byte** toXo
 		*toXor = result;
 }
 
-void encryptAlternative(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte *vigKey, char *transKey){
+//void encryptAlternative(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte *vigKey, char *transKey){
+//	
+//	matrixTransposer(key);
+//	matrixTransposer(vigKey);
+//
+//	byte **allKeys = (byte**)calloc(rounds + 1, sizeof(byte*));
+//	for (int i = 0; i < rounds + 1; i++)
+//		allKeys[i] = (byte*)calloc(16, sizeof(byte));
+//	makeAllRoundKeys(rounds, allKeys, key);
+//
+//	byte* toXor = NULL;
+//	if (type == CBC) //CBC
+//	{
+//		matrixTransposer(iv);
+//		toXor = iv;
+//	}
+//
+//	for (int i = 0; i < dataSize / 16; i++)
+//	{
+//		matrixTransposer(data + i * 16);
+//		encryptBlockAlternative(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type, vigKey, transKey);
+//	}
+//
+//	//transpor os dados de volta ===============================================================
+//	for (int i = 0; i < dataSize / 16; i++)
+//	{
+//		matrixTransposer(data + i * 16);
+//		matrixTransposer(result + i * 16);
+//	}
+//
+//	matrixTransposer(vigKey);
+//	matrixTransposer(key);
+//	if (type == CBC)
+//		matrixTransposer(iv);
+//	//fim transposição =========================================================================
+//
+//	for (int i = 0; i < rounds + 1; i++)
+//		free(allKeys[i]);
+//
+//	free(allKeys);
+//}
+void encryptAlternative(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv){
+	byte *vigKey = getVigKeyFromFile();
+	char *transKey = getTransKeyFromFile();
 	matrixTransposer(key);
 	matrixTransposer(vigKey);
 
@@ -621,6 +724,7 @@ void encryptAlternative(byte * data, int dataSize, byte * key, byte * result, in
 	free(allKeys);
 }
 
+
 void vigenereCipherDecryption(byte *bytes, byte *key){
 	for (int i = 0; i < 16; i++)
 		bytes[i] = (bytes[i] - key[i]) % 256;
@@ -651,8 +755,46 @@ void decryptBlockAlternative(byte* data, byte** allKeys, int rounds, byte** toXo
 	}
 }
 
-void decryptAlternative(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte* vigKey, char* transKey)
+//void decryptAlternative(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte* vigKey, char* transKey)
+//{
+//	matrixTransposer(key);
+//	matrixTransposer(vigKey);
+//
+//	byte **allKeys = (byte**)calloc(rounds + 1, sizeof(byte*));
+//	for (int i = 0; i < rounds + 1; i++)
+//		allKeys[i] = (byte*)calloc(16, sizeof(byte));
+//	makeAllRoundKeys(rounds, allKeys, key);
+//
+//	byte* toXor = NULL;
+//	if (type == CBC) //CBC
+//	{
+//		matrixTransposer(iv);
+//		toXor = iv;
+//	}
+//
+//	for (int i = 0; i < dataSize / 16; i++)
+//	{
+//		matrixTransposer(data + i * 16);
+//		decryptBlockAlternative(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type, vigKey, transKey);
+//	}
+//
+//	for (int i = 0; i < dataSize / 16; i++)
+//	{
+//		matrixTransposer(data + i * 16);
+//		matrixTransposer(result + i * 16);
+//		//printf("\nRESULTADO FINAL EM NOSSO FORMATO\n");
+//		//printMatrix(result + i * 16);
+//	}
+//
+//	for (int i = 0; i < rounds + 1; i++)
+//		free(allKeys[i]);
+//
+//	free(allKeys);
+//}
+void decryptAlternative(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv )
 {
+	byte* vigKey = getTransKeyFromFile();
+	char* transKey = getTransKeyFromFile();
 	matrixTransposer(key);
 	matrixTransposer(vigKey);
 
@@ -687,6 +829,7 @@ void decryptAlternative(byte * data, int dataSize, byte * key, byte * result, in
 
 	free(allKeys);
 }
+
 
 void encryptBlockAddRoundKey(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type)
 {
