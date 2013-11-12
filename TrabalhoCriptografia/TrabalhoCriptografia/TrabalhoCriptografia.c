@@ -1,6 +1,8 @@
 // TrabalhoCriptografia.cpp : Defines the entry point for the console application.
 //
 #include "Tests.h"
+#include "Images.h"
+#include "AES.h"
 #include <stdlib.h>
 #include "Images.h"
 #include <stdio.h>
@@ -107,6 +109,65 @@ byte* getKeyFromFile()
 	}
 	return key;
 }
+char* getTransKeyFromFile()
+{
+	char* key = (char*)malloc(4 * sizeof(char));
+	FILE * file;
+	char c;
+
+	file = fopen("transkey.txt", "r");
+	int i = 0;
+	if (file)
+	{
+		while ((c = getc(file)) != EOF)
+		{
+			*(key + i) = c;	
+			i++;
+		}
+		*(key + 4) = '\0';
+		fclose(file);
+	}
+	return key;
+}
+byte* getVigKeyFromFile()
+{
+	byte* key = (byte*)malloc(16 * sizeof(byte));
+	FILE * file;
+	char c;
+	char* dupla = (char*)malloc(2 * sizeof(char));
+	int pos = 1;
+	int i = 0;
+	file = fopen("vigkey.txt", "r");
+	if (file)
+	{
+		while ((c = getc(file)) != EOF)
+		{
+
+			if (c != ' ')
+			{
+
+				if (pos)
+				{
+					*dupla = c;
+					pos = !pos;
+				}
+				else
+				{
+					*(dupla + 1) = c;
+					*(dupla + 2) = '\0';
+					pos = !pos;
+					key[i] = getValueFromChars(dupla);
+					i++;
+				}
+				//putchar(c);
+
+			}
+		}
+		*(key + 16) = '\0';
+		fclose(file);
+	}
+	return key;
+}
 byte* getIVFromFile()
 {
 	byte* iv = (byte*)malloc(16 * sizeof(byte));
@@ -148,6 +209,7 @@ byte* getIVFromFile()
 }
 void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 {
+	getTransKeyFromFile();
 	byte *iv = getIVFromFile();
 	//printf("%d\n", iv);
 	byte *key = getKeyFromFile();
@@ -179,10 +241,11 @@ void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 		if (mode == 1)
 		{
 			//AES APENAS COM ADDROUNDKEY
-			//	if (cript == 1)
+			if (cript == 1)
+				process(filepath, destFile, key, rounds, NULL, ECB, encryptAddRoundKey);
 			//AES CONVENCIONAL
 			if (cript == 2)
-				encryptImage(filepath, destFile, key, rounds, NULL, ECB);
+				process(filepath, destFile, key, rounds, NULL, ECB,encrypt);
 			//AES MODIFICADO
 			//if (cript == 3)
 
@@ -191,10 +254,11 @@ void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 		if (mode == 2)
 		{
 			//AES APENAS COM ADDROUNDKEY
-			//	if (cript == 1)
+			if (cript == 1)
+				process(filepath, destFile, key, rounds, iv, CBC, encryptAddRoundKey);
 			//AES CONVENCIONAL
 			if (cript == 2)
-				encryptImage(filepath, destFile, key, rounds, iv, CBC);
+				process(filepath, destFile, key, rounds, iv, CBC,encrypt);
 			//AES MODIFICADO
 			//if (cript == 3)
 		}
@@ -206,21 +270,20 @@ void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 		if (mode == 1)
 		{
 
-			//if (cript == 1)
-
+			if (cript == 1)
+				process(filepath, destFile, key, rounds, NULL, ECB, decryptAddRoundKey);
 			if (cript == 2)
-				decryptImage(filepath, destFile, key, rounds, NULL, ECB);
+				process(filepath, destFile, key, rounds, NULL, ECB,decrypt);
 			//	if (cript == 3)
 
 		}
 		//CBC
 		if (mode == 2)
 		{
-			//	if (cript == 1)
-
+			if (cript == 1)
+				process(filepath, destFile, key, rounds, iv, CBC, decryptAddRoundKey);
 			if (cript == 2)
-				decryptImage(filepath, destFile, key, rounds, iv, CBC);
-			//	if (cript == 3)
+				process(filepath, destFile, key, rounds, iv, CBC, decrypt);
 		}
 	}
 
