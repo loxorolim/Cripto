@@ -422,11 +422,24 @@ void encrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, i
 		encryptBlock(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type);
 	}
 
+	
+
 	//transpor os dados de volta ===============================================================
 	for (int i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
 		matrixTransposer(result + i * 16);
+	}
+
+	int remainingBytes = dataSize % 16;
+	if (remainingBytes != 0){
+		int reusedBytes = 16 - remainingBytes;
+		int newBlockIndex = dataSize - 16;
+		byte lastBlock[16];
+		memcpy(lastBlock, result + dataSize - 16, reusedBytes);
+		memcpy(lastBlock + reusedBytes, data + dataSize - remainingBytes, remainingBytes);
+
+		encryptBlock(lastBlock, allKeys, rounds, NULL, result + dataSize - 16, ECB);
 	}
 
 	matrixTransposer(key);
@@ -457,6 +470,17 @@ void decrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, i
 		toXor = iv;
 	}
 
+	int remainingBytes = dataSize % 16;
+	if (remainingBytes != 0){
+		byte lastBlock[16];
+		memcpy(lastBlock, data + dataSize - 16, 16);
+
+		decryptBlock(lastBlock, allKeys, rounds, NULL, data + dataSize - 16, ECB);
+
+		//tem que copiar os bytes que sobraram pro result, pois eles não serão tratados pelo algoritmo principal
+		memcpy(result + dataSize - remainingBytes, data + dataSize - remainingBytes, remainingBytes);
+	}
+
 	for (int i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
@@ -470,6 +494,8 @@ void decrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, i
 		//printf("\nRESULTADO FINAL EM NOSSO FORMATO\n");
 		//printMatrix(result + i * 16);
 	}
+
+	
 
 	for (int i = 0; i < rounds + 1; i++)
 		free(allKeys[i]);
