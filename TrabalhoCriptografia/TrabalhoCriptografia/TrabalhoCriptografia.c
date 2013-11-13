@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <IL/il.h>
+#include <conio.h>
+#include <locale.h>
 
 #define ENCRYPT 1
 #define DECRYPT 0
@@ -166,13 +168,15 @@ void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 	char* destFile = (char*)malloc((tam+addStringTam) * sizeof(char));
 	char *codif = (char*)malloc(3 * sizeof(char));
 	strcpy(codif, filepath+(tam-4));
-	printf("%s\n", codif);
+	//printf("%s\n", codif);
 	strncpy(destFile, filepath, tam - 4);
 	destFile[tam - 4] = '\0';
-	printf("%s\n",destFile);
+	//printf("%s\n",destFile);
 	destFile = concat(destFile, addString);
 	destFile = concat(destFile, codif);
-	printf("%s", destFile);
+	printf("\n");
+	printf("%s","Arquivo gerado: ");
+	printf("%s\n\n", destFile);
 	//CRIPTOGRAFAR
 	if (op == 1)
 	{
@@ -244,6 +248,7 @@ void interface()
 	int rounds = 0;
 	char *filepath = (char*)malloc(1000*sizeof(char));
 
+	printf("Digite o número da opção desejada para selecioná-la:\n\n");
 	printf("Escolha a operação:\n");
 	printf("1: Criptografar\n");
 	printf("2: Decriptografar\n");
@@ -269,9 +274,13 @@ void interface()
 	scanf("%s", filepath);
 
 
-	printf("Atencao! A chave e o vetor de inicialização (caso haja) são lidos dos arquivos:\n");
-	printf("key.txt\n");
-	printf("iv.txt\n");
+	printf("\nAtenção! A chave e o vetor de inicialização (caso haja) são lidos dos arquivos:\n");
+	printf("\nkey.txt\n");
+	printf("iv.txt\n\n");	
+	printf("Atenção novamente! O algoritmo alternativo criado utiliza duas chaves, a de vigenére e a de transposição que são lidas dos arquivos:\n");
+	printf("\nvigkey.txt\n");
+	printf("transkey.txt\n\n");
+	printf("A chave transkey deve conter 4 caracteres.\n");
 
 	executeCipher(op, mode, cripto, rounds, filepath);
 
@@ -284,7 +293,7 @@ int main(int argc, char* argv[])
 	ilEnable(IL_FILE_OVERWRITE);             //permite que a biblioteca sobrescreva arquivos em disco
 	ilEnable(IL_ORIGIN_SET);                 //define a origem das imagens como o canto superior esquerdo
 	ilOriginFunc(IL_ORIGIN_UPPER_LEFT);
-
+	setlocale(LC_ALL, "Portuguese");
 	//shiftRowsTest();
 	//addRoundKeyTest();
 	//testMixColumns();

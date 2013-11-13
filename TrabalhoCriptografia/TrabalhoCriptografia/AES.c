@@ -793,7 +793,7 @@ void decryptBlockAlternative(byte* data, byte** allKeys, int rounds, byte** toXo
 //}
 void decryptAlternative(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv )
 {
-	byte* vigKey = getTransKeyFromFile();
+	byte* vigKey = getVigKeyFromFile();
 	char* transKey = getTransKeyFromFile();
 	matrixTransposer(key);
 	matrixTransposer(vigKey);
