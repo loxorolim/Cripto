@@ -11,7 +11,7 @@ static void printData(byte* data, int size){
 		printf("%2x ", data[i]);
 }
 
-void process(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type, CryptFunc f){
+long process(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type, CryptFunc f){
 	ILuint srcID = ilGenImage();               //gera a imagem de origem
 	ilBindImage(srcID);                        //manda trabalhar com essa imagem
 	ilLoadImage(srcFile);                      //carrega a imagem de origem do arquivo
@@ -35,16 +35,20 @@ void process(const char* srcFile, const char* destFile, byte *key, int rounds, b
 	ilSaveImage(destFile);                                  //salva a imagem resultante em disco
 
 	
+	long hammingDist = calculateHammingDistance(originalData, result, size);
+
 	ilDeleteImage(srcID);                                   //apaga as duas imagens
 	ilDeleteImage(destID);
 
 	free(result);                                           //libera a memória dos pixels processados
 	free(originalData);
+
+	return hammingDist;
 }
 
 
-void encryptImage(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type){
-	process(srcFile, destFile, key, rounds, iv, type, encrypt);
+long encryptImage(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type){
+	return process(srcFile, destFile, key, rounds, iv, type, encrypt);
 }
 
 void decryptImage(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type){

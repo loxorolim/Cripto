@@ -11,8 +11,12 @@ typedef void(*CryptFunc)(byte*, int, byte*, byte*, int, int, byte*);
 
 typedef unsigned char byte;
 
-void process(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type, CryptFunc f);
-void encryptImage(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type);
+long process(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type, CryptFunc f);
+
+//Encripta uma imagem e retorna a distância de Hamming
+long encryptImage(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type);
+
+//Decrypta uma imagem
 void decryptImage(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type);
 
 #endif

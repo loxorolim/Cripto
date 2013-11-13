@@ -63,14 +63,7 @@ byte valueOfChar(char c)
 	if (c == 'F' || c == 'f')
 		return 15;
 }
-byte getValueFromChars(char* dupla)
-{
-//	printf("%s\n",dupla);
-	byte ret = valueOfChar(dupla[0]) * 16 + valueOfChar(dupla[1]);
-//	printf("%d\n", ret);
-	return ret;
 
-}
 byte* getKeyFromFile()
 {
 	byte* key = (byte*)malloc(16 * sizeof(byte));
@@ -186,10 +179,12 @@ void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 		{
 			//AES APENAS COM ADDROUNDKEY
 			if (cript == 1)
+		
 				process(filepath, destFile, key, rounds, NULL, ECB, encryptAddRoundKey);
 			//AES CONVENCIONAL
 			if (cript == 2)
-				process(filepath, destFile, key, rounds, NULL, ECB,encrypt);
+				printf("\n%s%d", "Distancia de hamming: " + process(filepath, destFile, key, rounds, NULL, ECB, encrypt));
+				//process(filepath, destFile, key, rounds, NULL, ECB,encrypt);
 			//AES MODIFICADO
 			if (cript == 3)
 				process(filepath, destFile, key, rounds, NULL, ECB, encryptAlternative);

@@ -4,7 +4,7 @@
 #define ECB 1
 #define CBC 0
 
-typedef unsigned char byte;
+#include "utils.h"
 
 byte gmul(byte a, byte b);
 
