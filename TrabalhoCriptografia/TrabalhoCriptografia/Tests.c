@@ -1,5 +1,6 @@
 #include "Tests.h"
 #include "AES.h"
+#include "AlternativeAES.h"
 #include "Images.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -220,7 +221,7 @@ void alternativeEncryptionTest(){
 		printf("\nBloco %d:\n", i + 1);
 		printMatrix(inputData + i * 16);
 	}
-	encryptAlternative(inputData, dataSize, originalKey, result, 10, CBC, iv, vigKey, transKey);
+	encryptAlternative(inputData, dataSize, originalKey, result, 10, CBC, iv);
 	printf("\nResultado Encriptacao:\n");
 	for (int i = 0; i < dataSize / 16; i++)
 	{
