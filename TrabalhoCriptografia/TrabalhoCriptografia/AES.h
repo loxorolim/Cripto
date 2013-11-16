@@ -1,8 +1,8 @@
 #ifndef AES_H
 #define AES_H
 
-#define ECB 1
-#define CBC 0
+static const int ECB = 1;
+static const int CBC = 0;
 
 #include "utils.h"
 
@@ -33,7 +33,7 @@ void decrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, i
 void decryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type);
 
 void matrixTransposer(byte* data);
-long calculateOnBits(byte b);
+
 float calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize);
 //void byteStuffer(byte * b, int size);
 
