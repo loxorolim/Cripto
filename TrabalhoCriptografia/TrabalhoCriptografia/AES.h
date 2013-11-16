@@ -1,9 +1,6 @@
 #ifndef AES_H
 #define AES_H
 
-#define ECB 1
-#define CBC 0
-
 #include "utils.h"
 
 byte gmul(byte a, byte b);
