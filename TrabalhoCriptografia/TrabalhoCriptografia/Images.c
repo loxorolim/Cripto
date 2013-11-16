@@ -9,9 +9,10 @@ typedef void(*CryptFunc)(byte*, int, byte*, byte*, int, int, byte*);
 static void printData(byte* data, int size){
 	for (int i = 0; i < size; i++)
 		printf("%2x ", data[i]);
+	printf("\n");
 }
 
-long process(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type, CryptFunc f){
+void process(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type, CryptFunc f){
 	ILuint srcID = ilGenImage();               //gera a imagem de origem
 	ilBindImage(srcID);                        //manda trabalhar com essa imagem
 	ilLoadImage(srcFile);                      //carrega a imagem de origem do arquivo
@@ -33,24 +34,44 @@ long process(const char* srcFile, const char* destFile, byte *key, int rounds, b
 	ilLoadDataL(result, size, width, height, 1, bpp);       //preenche a imagem resultante com os pixels calculados
 	
 	ilSaveImage(destFile);                                  //salva a imagem resultante em disco
-
 	
-	long hammingDist = calculateHammingDistance(originalData, result, size);
-
 	ilDeleteImage(srcID);                                   //apaga as duas imagens
 	ilDeleteImage(destID);
 
 	free(result);                                           //libera a memória dos pixels processados
 	free(originalData);
-
-	return hammingDist;
 }
 
 
-long encryptImage(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type){
-	return process(srcFile, destFile, key, rounds, iv, type, encrypt);
+void encryptImage(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type){
+	process(srcFile, destFile, key, rounds, iv, type, encrypt);
 }
 
 void decryptImage(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type){
 	process(srcFile, destFile, key, rounds, iv, type, decrypt);
+}
+
+float getImageHammingDistance(const char* srcFile, const char* destFile){
+	ILuint srcID = ilGenImage();               //gera a imagem de origem
+	ilBindImage(srcID);                        //manda trabalhar com essa imagem
+	ilLoadImage(srcFile);                      //carrega a imagem de origem do arquivo
+
+	int width = ilGetInteger(IL_IMAGE_WIDTH);            //obtém largura da imagem
+	int height = ilGetInteger(IL_IMAGE_HEIGHT);          //obtém altura da imagem
+	int bpp = ilGetInteger(IL_IMAGE_BYTES_PER_PIXEL);    //obtém taxa de "bytes per pixel" da imagem
+
+	int size = width * height * bpp;                     //calcula tamanho de bytes na imagem
+
+	byte *srcData = ilGetData();
+
+	ILuint destID = ilGenImage();
+	ilBindImage(destID);
+	ilLoadImage(destFile);
+	byte *destData = ilGetData();
+
+	float resp = calculateHammingDistance(srcData, destData, size);
+
+	ilDeleteImage(srcID);
+	ilDeleteImage(destID);
+	return resp;
 }

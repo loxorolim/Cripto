@@ -315,15 +315,15 @@ void encrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, i
 		matrixTransposer(result + i * 16);
 	}
 
-	int remainingBytes = dataSize % 16;
-	if (remainingBytes != 0){
-		int reusedBytes = 16 - remainingBytes;
-		int newBlockIndex = dataSize - 16;
-		byte lastBlock[16];
-		memcpy(lastBlock, result + dataSize - 16, reusedBytes);
-		memcpy(lastBlock + reusedBytes, data + dataSize - remainingBytes, remainingBytes);
+	
+	int remainingBytes = dataSize % 16;               //calcula quantos bytes sobraram no último blocoo
+	if (remainingBytes != 0){                        //se sobraram bytes, junta-os com os anteriores e re-criptografa
+		int reusedBytes = 16 - remainingBytes;       //quantidade de bytes que serão re-criptografados
+		byte lastBlock[16];                          //aloca espaço para o bloco fictício
+		memcpy(lastBlock, result + dataSize - 16, reusedBytes);   //preenche esse bloco com os bytes reusados
+		memcpy(lastBlock + reusedBytes, data + dataSize - remainingBytes, remainingBytes);  //preenche o bloco com os bytes que sobraram
 
-		encryptBlock(lastBlock, allKeys, rounds, NULL, result + dataSize - 16, ECB);
+		encryptBlock(lastBlock, allKeys, rounds, NULL, result + dataSize - 16, ECB); //encripta o bloco virtual
 	}
 
 	matrixTransposer(key);
@@ -400,7 +400,7 @@ long calculateOnBits(byte b)
 	return count;
 }
 
-long calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize)
+float calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize)
 {
 	long dist = 0;
 
@@ -409,7 +409,7 @@ long calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize)
 		byte xor = clearM[i] ^ criptoM[i];
 		dist += calculateOnBits(xor);
 	}
-	return dist;
+	return dist / (float)(arraySize * 8.0f); //quantidade total de bits = quantidade de bytes * 8
 }
 //byte* byteStuffer(byte * b, int size, int* newSize)
 //{
@@ -487,6 +487,16 @@ void encryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, in
 		matrixTransposer(result + i * 16);
 	}
 
+	int remainingBytes = dataSize % 16;               //calcula quantos bytes sobraram no último blocoo
+	if (remainingBytes != 0){                        //se sobraram bytes, junta-os com os anteriores e re-criptografa
+		int reusedBytes = 16 - remainingBytes;       //quantidade de bytes que serão re-criptografados
+		byte lastBlock[16];                          //aloca espaço para o bloco fictício
+		memcpy(lastBlock, result + dataSize - 16, reusedBytes);   //preenche esse bloco com os bytes reusados
+		memcpy(lastBlock + reusedBytes, data + dataSize - remainingBytes, remainingBytes);  //preenche o bloco com os bytes que sobraram
+
+		encryptBlock(lastBlock, allKeys, rounds, NULL, result + dataSize - 16, ECB); //encripta o bloco virtual
+	}
+
 	matrixTransposer(key);
 	if (type == CBC)
 		matrixTransposer(iv);
@@ -504,15 +514,10 @@ void decryptBlockAddRoundKey(byte* data, byte** allKeys, int rounds, byte** toXo
 
 	//Primeiro round
 	addRoundKey(result, 0, allKeys[rounds]);
-//	inverseShiftRows(result);
-//	inverseSubBytes(result, 16);
 
 	//demais rounds
 	for (int i = rounds - 1; i >= 1; i--){
 		addRoundKey(result, 0, allKeys[i]);
-//		inverseMixColumns(result);
-//		inverseShiftRows(result);
-//		inverseSubBytes(result, 16);
 	}
 
 	//Último round
@@ -539,6 +544,17 @@ void decryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, in
 		toXor = iv;
 	}
 
+	int remainingBytes = dataSize % 16;
+	if (remainingBytes != 0){
+		byte lastBlock[16];
+		memcpy(lastBlock, data + dataSize - 16, 16);
+
+		decryptBlock(lastBlock, allKeys, rounds, NULL, data + dataSize - 16, ECB);
+
+		//tem que copiar os bytes que sobraram pro result, pois eles não serão tratados pelo algoritmo principal
+		memcpy(result + dataSize - remainingBytes, data + dataSize - remainingBytes, remainingBytes);
+	}
+
 	for (int i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
@@ -549,8 +565,6 @@ void decryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, in
 	{
 		matrixTransposer(data + i * 16);
 		matrixTransposer(result + i * 16);
-		//printf("\nRESULTADO FINAL EM NOSSO FORMATO\n");
-		//printMatrix(result + i * 16);
 	}
 
 	for (int i = 0; i < rounds + 1; i++)

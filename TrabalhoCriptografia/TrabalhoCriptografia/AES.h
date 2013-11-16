@@ -1,6 +1,9 @@
 #ifndef AES_H
 #define AES_H
 
+#define ECB 1
+#define CBC 0
+
 #include "utils.h"
 
 byte gmul(byte a, byte b);
@@ -30,8 +33,8 @@ void decrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, i
 void decryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type);
 
 void matrixTransposer(byte* data);
-long calculateOnBits(byte b);
-long calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize);
+
+float calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize);
 //void byteStuffer(byte * b, int size);
 
 void encryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv);
