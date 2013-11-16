@@ -178,6 +178,16 @@ void encryptAlternative(byte * data, int dataSize, byte * key, byte * result, in
 		matrixTransposer(result + i * 16);
 	}
 
+	int remainingBytes = dataSize % 16;               //calcula quantos bytes sobraram no último blocoo
+	if (remainingBytes != 0){                        //se sobraram bytes, junta-os com os anteriores e re-criptografa
+		int reusedBytes = 16 - remainingBytes;       //quantidade de bytes que serão re-criptografados
+		byte lastBlock[16];                          //aloca espaço para o bloco fictício
+		memcpy(lastBlock, result + dataSize - 16, reusedBytes);   //preenche esse bloco com os bytes reusados
+		memcpy(lastBlock + reusedBytes, data + dataSize - remainingBytes, remainingBytes);  //preenche o bloco com os bytes que sobraram
+
+		encryptBlockAlternative(lastBlock, allKeys, rounds, NULL, result + dataSize - 16, ECB, vigKey, transKey, *vigKeySize); //encripta o bloco virtual
+	}
+
 	matrixTransposer(vigKey);
 	matrixTransposer(key);
 	if (type == CBC)
@@ -282,6 +292,17 @@ void decryptAlternative(byte * data, int dataSize, byte * key, byte * result, in
 	{
 		matrixTransposer(iv);
 		toXor = iv;
+	}
+
+	int remainingBytes = dataSize % 16;
+	if (remainingBytes != 0){
+		byte lastBlock[16];
+		memcpy(lastBlock, data + dataSize - 16, 16);
+
+		decryptBlockAlternative(lastBlock, allKeys, rounds, NULL, data + dataSize - 16, ECB, vigKey, transKey, *vigKeySize);
+
+		//tem que copiar os bytes que sobraram pro result, pois eles não serão tratados pelo algoritmo principal
+		memcpy(result + dataSize - remainingBytes, data + dataSize - remainingBytes, remainingBytes);
 	}
 
 	for (int i = 0; i < dataSize / 16; i++)

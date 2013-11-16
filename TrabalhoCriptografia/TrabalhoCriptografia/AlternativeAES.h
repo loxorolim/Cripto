@@ -1,3 +1,6 @@
+#ifndef AES_ALTERNATIVE_H
+#define AES_ALTERANTIVE_H
+
 #include "utils.h"
 
 char* getTransKeyFromFile();
@@ -15,3 +18,5 @@ void vigenereCipherDecryption(byte *bytes, byte *key, int size);
 
 void columnarTransposition(byte *bytes, char *key, int dataSize);
 void inverseColumnarTransposition(byte *bytes, char *key, int dataSize);
+
+#endif
