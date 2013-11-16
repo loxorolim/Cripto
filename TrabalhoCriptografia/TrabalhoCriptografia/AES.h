@@ -1,8 +1,8 @@
 #ifndef AES_H
 #define AES_H
 
-static const int ECB = 1;
-static const int CBC = 0;
+#define ECB 1
+#define CBC 0
 
 #include "utils.h"
 
@@ -37,24 +37,10 @@ void matrixTransposer(byte* data);
 float calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize);
 //void byteStuffer(byte * b, int size);
 
-void vigenereCipherEncryption(byte *bytes, byte *key);
-void encryptBlockVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte *vigKey);
-void encryptVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte *vigKey);
-
-void vigenereCipherDecryption(byte *bytes, byte *key);
-void decryptBlockVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte *vigKey);
-void decryptVigenere(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv, byte *vigKey);
-
-void columnarTransposition(byte *bytes, char *key, int dataSize);
-void inverseColumnarTransposition(byte *bytes, char *key, int dataSize);
-
 void encryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv);
 void decryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv);
 
 void decryptBlockAddRoundKey(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type);
 void encryptBlockAddRoundKey(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type);
-
-void encryptAlternative(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv);
-void decryptAlternative(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv);
 
 #endif

@@ -1,15 +1,17 @@
 // TrabalhoCriptografia.cpp : Defines the entry point for the console application.
 //
-#include "Tests.h"
-#include "Images.h"
-#include "AES.h"
 #include <stdlib.h>
-#include "Images.h"
 #include <stdio.h>
 #include <string.h>
 #include <IL/il.h>
 #include <conio.h>
 #include <locale.h>
+
+#include "Tests.h"
+#include "Images.h"
+#include "AES.h"
+#include "Images.h"
+#include "AlternativeAES.h"
 
 #define ENCRYPT 1
 #define DECRYPT 0
