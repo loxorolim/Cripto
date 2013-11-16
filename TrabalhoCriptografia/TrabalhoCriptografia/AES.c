@@ -462,7 +462,7 @@ long calculateOnBits(byte b)
 	return count;
 }
 
-long calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize)
+float calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize)
 {
 	long dist = 0;
 
@@ -471,7 +471,7 @@ long calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize)
 		byte xor = clearM[i] ^ criptoM[i];
 		dist += calculateOnBits(xor);
 	}
-	return dist;
+	return dist / (float)(arraySize * 8.0f); //quantidade total de bits = quantidade de bytes * 8
 }
 //byte* byteStuffer(byte * b, int size, int* newSize)
 //{

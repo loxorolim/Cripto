@@ -183,7 +183,7 @@ void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 				process(filepath, destFile, key, rounds, NULL, ECB, encryptAddRoundKey);
 			//AES CONVENCIONAL
 			if (cript == 2)
-				printf("\n%s%d", "Distancia de hamming: " + process(filepath, destFile, key, rounds, NULL, ECB, encrypt));
+				process(filepath, destFile, key, rounds, NULL, ECB, encrypt);
 				//process(filepath, destFile, key, rounds, NULL, ECB,encrypt);
 			//AES MODIFICADO
 			if (cript == 3)
@@ -203,6 +203,8 @@ void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 			if (cript == 3)
 				process(filepath, destFile, key, rounds, iv, CBC, encryptAlternative);
 		}
+
+		printf("Distância de hamming entre %s e %s: %f\n", filepath, destFile, getImageHammingDistance(filepath, destFile));
 	}
 	//DECRIPTOGRAFAR
 	if (op == 2)
