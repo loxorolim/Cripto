@@ -494,7 +494,7 @@ void encryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, in
 		memcpy(lastBlock, result + dataSize - 16, reusedBytes);   //preenche esse bloco com os bytes reusados
 		memcpy(lastBlock + reusedBytes, data + dataSize - remainingBytes, remainingBytes);  //preenche o bloco com os bytes que sobraram
 
-		encryptBlock(lastBlock, allKeys, rounds, NULL, result + dataSize - 16, ECB); //encripta o bloco virtual
+		encryptBlockAddRoundKey(lastBlock, allKeys, rounds, NULL, result + dataSize - 16, ECB); //encripta o bloco virtual
 	}
 
 	matrixTransposer(key);
@@ -549,7 +549,7 @@ void decryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, in
 		byte lastBlock[16];
 		memcpy(lastBlock, data + dataSize - 16, 16);
 
-		decryptBlock(lastBlock, allKeys, rounds, NULL, data + dataSize - 16, ECB);
+		decryptBlockAddRoundKey(lastBlock, allKeys, rounds, NULL, data + dataSize - 16, ECB);
 
 		//tem que copiar os bytes que sobraram pro result, pois eles não serão tratados pelo algoritmo principal
 		memcpy(result + dataSize - remainingBytes, data + dataSize - remainingBytes, remainingBytes);
