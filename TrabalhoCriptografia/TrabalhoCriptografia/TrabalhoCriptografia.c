@@ -16,9 +16,6 @@
 #define ENCRYPT 1
 #define DECRYPT 0
 
-#define ECB 1
-#define CBC 0
-
 typedef unsigned char byte;
 
 char* concat(char *s1, char *s2)

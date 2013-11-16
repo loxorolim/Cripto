@@ -33,6 +33,9 @@
     <ClInclude Include="utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AlternativeAES.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TrabalhoCriptografia.c">
@@ -48,6 +51,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utils.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AlternativeAES.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

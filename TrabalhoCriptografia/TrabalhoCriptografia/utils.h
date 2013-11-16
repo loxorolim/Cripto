@@ -1,8 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-static const int ECB = 1;
-static const int CBC = 0;
+#define ECB 1
+#define CBC 0
 
 typedef unsigned char byte;
 

@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "utils.h"
 
 void shiftRowsTest(){
 	byte mat[] = {
@@ -221,7 +222,7 @@ void alternativeEncryptionTest(){
 		printf("\nBloco %d:\n", i + 1);
 		printMatrix(inputData + i * 16);
 	}
-	encryptAlternative(inputData, dataSize, originalKey, result, 10, CBC, iv);
+	encryptAlternative(inputData, dataSize, originalKey, result, 10, CBC, iv, 16);
 	printf("\nResultado Encriptacao:\n");
 	for (int i = 0; i < dataSize / 16; i++)
 	{

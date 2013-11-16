@@ -82,12 +82,14 @@
   <ItemGroup>
     <ClInclude Include="AES.h" />
     <ClInclude Include="aes_tables.h" />
+    <ClInclude Include="AlternativeAES.h" />
     <ClInclude Include="Images.h" />
     <ClInclude Include="Tests.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AES.c" />
+    <ClCompile Include="AlternativeAES.c" />
     <ClCompile Include="Images.c" />
     <ClCompile Include="Tests.c" />
     <ClCompile Include="TrabalhoCriptografia.c" />
