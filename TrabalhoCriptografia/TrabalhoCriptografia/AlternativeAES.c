@@ -148,8 +148,8 @@ void encryptBlockAlternative(byte* data, byte** allKeys, int rounds, byte** toXo
 }
 
 void encryptAlternative(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv){
-	int* vigKeySize = (int*)calloc(1,sizeof(int));
-	byte *vigKey = getVigKeyFromFile(vigKeySize);
+	int vigKeySize;
+	byte *vigKey = getVigKeyFromFile(&vigKeySize);
 	char *transKey = getTransKeyFromFile();
 	matrixTransposer(key);
 	matrixTransposer(vigKey);
@@ -169,7 +169,7 @@ void encryptAlternative(byte * data, int dataSize, byte * key, byte * result, in
 	for (int i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
-		encryptBlockAlternative(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type, vigKey, transKey, *vigKeySize);
+		encryptBlockAlternative(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type, vigKey, transKey, vigKeySize);
 	}
 
 	//transpor os dados de volta ===============================================================
@@ -186,7 +186,7 @@ void encryptAlternative(byte * data, int dataSize, byte * key, byte * result, in
 		memcpy(lastBlock, result + dataSize - 16, reusedBytes);   //preenche esse bloco com os bytes reusados
 		memcpy(lastBlock + reusedBytes, data + dataSize - remainingBytes, remainingBytes);  //preenche o bloco com os bytes que sobraram
 
-		encryptBlockAlternative(lastBlock, allKeys, rounds, NULL, result + dataSize - 16, ECB, vigKey, transKey, *vigKeySize); //encripta o bloco virtual
+		encryptBlockAlternative(lastBlock, allKeys, rounds, NULL, result + dataSize - 16, ECB, vigKey, transKey, vigKeySize); //encripta o bloco virtual
 	}
 
 	matrixTransposer(vigKey);
@@ -277,8 +277,8 @@ void decryptBlockAlternative(byte* data, byte** allKeys, int rounds, byte** toXo
 
 void decryptAlternative(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv)
 {
-	int* vigKeySize = (int*)calloc(1, sizeof(int));
-	byte* vigKey = getVigKeyFromFile(vigKeySize);
+	int vigKeySize;
+	byte* vigKey = getVigKeyFromFile(&vigKeySize);
 	char* transKey = getTransKeyFromFile();
 	matrixTransposer(key);
 	matrixTransposer(vigKey);
@@ -300,7 +300,7 @@ void decryptAlternative(byte * data, int dataSize, byte * key, byte * result, in
 		byte lastBlock[16];
 		memcpy(lastBlock, data + dataSize - 16, 16);
 
-		decryptBlockAlternative(lastBlock, allKeys, rounds, NULL, data + dataSize - 16, ECB, vigKey, transKey, *vigKeySize);
+		decryptBlockAlternative(lastBlock, allKeys, rounds, NULL, data + dataSize - 16, ECB, vigKey, transKey, vigKeySize);
 
 		//tem que copiar os bytes que sobraram pro result, pois eles não serão tratados pelo algoritmo principal
 		memcpy(result + dataSize - remainingBytes, data + dataSize - remainingBytes, remainingBytes);
@@ -309,7 +309,7 @@ void decryptAlternative(byte * data, int dataSize, byte * key, byte * result, in
 	for (int i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
-		decryptBlockAlternative(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type, vigKey, transKey, *vigKeySize);
+		decryptBlockAlternative(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type, vigKey, transKey, vigKeySize);
 	}
 
 	for (int i = 0; i < dataSize / 16; i++)
