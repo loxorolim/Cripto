@@ -61,6 +61,8 @@ byte valueOfChar(char c)
 		return 14;
 	if (c == 'F' || c == 'f')
 		return 15;
+
+	return 0;
 }
 
 byte* getKeyFromFile()

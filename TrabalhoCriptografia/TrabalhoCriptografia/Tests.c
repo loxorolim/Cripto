@@ -274,7 +274,7 @@ void columnarTranspositionTest(){
 	char* key = "BOLA";
 	int keyLen = strlen(key);
 	int dataSize = sizeof(inputData) / sizeof(*inputData);
-	int rowsCount = ceil((float)dataSize / (float)keyLen);
+	int rowsCount = (int)ceil((float)dataSize / (float)keyLen);
 	int resultSize = keyLen * rowsCount;
 
 	columnarTransposition(inputData, key, dataSize);
@@ -293,7 +293,7 @@ void inverseColumnarTranspositionTest(){
 	char* key = "BOLA";
 	int keyLen = strlen(key);
 	int dataSize = sizeof(inputData) / sizeof(*inputData);
-	int rowsCount = ceil((float)dataSize / (float)keyLen);
+	int rowsCount = (int)ceil((float)dataSize / (float)keyLen);
 	int resultSize = keyLen * rowsCount;
 	
 	inverseColumnarTransposition(inputData, key, resultSize);

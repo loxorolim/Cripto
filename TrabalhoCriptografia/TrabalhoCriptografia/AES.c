@@ -388,7 +388,7 @@ void decrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, i
 	free(allKeys);
 }
 
-long calculateOnBits(byte b)
+static long calculateOnBits(byte b)
 {
 	long count = 0;
 	for (int i = 0; i<8; i++)
@@ -411,25 +411,10 @@ float calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize)
 	}
 	return dist / (float)(arraySize * 8.0f); //quantidade total de bits = quantidade de bytes * 8
 }
-//byte* byteStuffer(byte * b, int size, int* newSize)
-//{
-//	int toStuff = size % 16;
-//	byte *newBytes = (byte*)calloc(size + toStuff, sizeof(byte*));
-//	memcpy(newBytes,b,size*sizeof(byte));
-//	if(toStuff != 0)
-//	{
-//		for(int i = 1; i <= toStuff;i++)
-//		{
-//			newBytes[size+i] = 0;
-//		}
-//	}
-//	*newSize =  size + toStuff;
-//	return newBytes;
-//
-//}
 
 void encryptBlockAddRoundKey(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type)
 {
+	int i;
 	if (type == CBC)
 		xor(data, *toXor, result);
 	else
@@ -439,18 +424,10 @@ void encryptBlockAddRoundKey(byte* data, byte** allKeys, int rounds, byte** toXo
 	addRoundKey(result, 0, allKeys[0]);
 
 	//demais rounds
-	for (int i = 1; i < rounds; i++)
-	{
-//		subBytes(result, 16);
-//		shiftRows(result);
-//		mixColumns(result);
-
+	for (i = 1; i < rounds; i++)
 		addRoundKey(result, 0, allKeys[i]);
-	}
 
 	//Último round
-//	subBytes(result, 16);
-//	shiftRows(result);
 	addRoundKey(result, 0, allKeys[rounds]);
 
 	if (type == CBC) // SE CBC
@@ -459,6 +436,7 @@ void encryptBlockAddRoundKey(byte* data, byte** allKeys, int rounds, byte** toXo
 
 void encryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv)
 {
+	int i;
 	matrixTransposer(key);
 
 	byte **allKeys = (byte**)calloc(rounds + 1, sizeof(byte*));
@@ -473,15 +451,14 @@ void encryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, in
 		toXor = iv;
 	}
 
-	for (int i = 0; i < dataSize / 16; i++)
+	for (i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
-	//	encryptBlock(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type);
 		encryptBlockAddRoundKey(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type);
 	}
 
 	//transpor os dados de volta ===============================================================
-	for (int i = 0; i < dataSize / 16; i++)
+	for (i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
 		matrixTransposer(result + i * 16);
@@ -508,17 +485,18 @@ void encryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, in
 
 	free(allKeys);
 }
+
 void decryptBlockAddRoundKey(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type)
 {
+	int i;
 	memcpy(result, data, 16 * sizeof(byte));
 
 	//Primeiro round
 	addRoundKey(result, 0, allKeys[rounds]);
 
 	//demais rounds
-	for (int i = rounds - 1; i >= 1; i--){
+	for (i = rounds - 1; i >= 1; i--)
 		addRoundKey(result, 0, allKeys[i]);
-	}
 
 	//Último round
 	addRoundKey(result, 0, allKeys[0]);
@@ -528,8 +506,10 @@ void decryptBlockAddRoundKey(byte* data, byte** allKeys, int rounds, byte** toXo
 		*toXor = data;
 	}
 }
+
 void decryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv)
 {
+	int i;
 	matrixTransposer(key);
 
 	byte **allKeys = (byte**)calloc(rounds + 1, sizeof(byte*));
@@ -555,21 +535,20 @@ void decryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, in
 		memcpy(result + dataSize - remainingBytes, data + dataSize - remainingBytes, remainingBytes);
 	}
 
-	for (int i = 0; i < dataSize / 16; i++)
+	for (i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
 		decryptBlockAddRoundKey(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type);
 	}
 
-	for (int i = 0; i < dataSize / 16; i++)
+	for (i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
 		matrixTransposer(result + i * 16);
 	}
 
-	for (int i = 0; i < rounds + 1; i++)
+	for (i = 0; i < rounds + 1; i++)
 		free(allKeys[i]);
-
 
 	free(allKeys);
 }
