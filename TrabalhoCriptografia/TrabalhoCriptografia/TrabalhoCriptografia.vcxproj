@@ -80,6 +80,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddRoundKeyAES.h" />
     <ClInclude Include="AES.h" />
     <ClInclude Include="aes_tables.h" />
     <ClInclude Include="AlternativeAES.h" />
@@ -88,6 +89,7 @@
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AddRoundKeyAES.c" />
     <ClCompile Include="AES.c" />
     <ClCompile Include="AlternativeAES.c" />
     <ClCompile Include="Images.c" />

@@ -12,6 +12,7 @@
 #include "AES.h"
 #include "Images.h"
 #include "AlternativeAES.h"
+#include "AddRoundKeyAES.h"
 
 #define ENCRYPT 1
 #define DECRYPT 0
@@ -20,7 +21,7 @@ typedef unsigned char byte;
 
 char* concat(char *s1, char *s2)
 {
-	char *result = (char*) malloc(strlen(s1) + strlen(s2) + 1);//+1 for the zero-terminator
+	char *result = (char*)malloc(strlen(s1) + strlen(s2) + 1);//+1 for the zero-terminator
 	//in real code you would check for errors in malloc here
 	strcpy(result, s1);
 	strcat(result, s2);
@@ -70,15 +71,15 @@ byte* getKeyFromFile()
 	byte* key = (byte*)malloc(16 * sizeof(byte));
 	FILE * file;
 	char c;
-	char* dupla = (char*)malloc(2 * sizeof(char));
+	char* dupla = (char*)malloc(3 * sizeof(char));
 	int pos = 1;
 	int i = 0;
 	file = fopen("key.txt", "r");
 	if (file)
 	{
-		while ((c = getc(file)) != EOF)
+		while ((c = getc(file)) != EOF && i<16)
 		{
-			
+
 			if (c != ' ')
 			{
 
@@ -96,12 +97,14 @@ byte* getKeyFromFile()
 					i++;
 				}
 				//putchar(c);
-			
-			} 
+
+			}
 		}
-		*(key + 16) = '\0';
+		//	*(key + 16) = '\0';
 		fclose(file);
 	}
+	free(dupla);
+
 	return key;
 }
 byte* getIVFromFile()
@@ -109,13 +112,13 @@ byte* getIVFromFile()
 	byte* iv = (byte*)malloc(16 * sizeof(byte));
 	FILE * file;
 	char c;
-	char* dupla = (char*)malloc(2 * sizeof(char));
+	char* dupla = (char*)malloc(3 * sizeof(char));
 	int pos = 1;
 	int i = 0;
 	file = fopen("iv.txt", "r");
 	if (file)
 	{
-		while ((c = getc(file)) != EOF)
+		while ((c = getc(file)) != EOF && i<16)
 		{
 
 			if (c != ' ')
@@ -138,30 +141,33 @@ byte* getIVFromFile()
 
 			}
 		}
-		*(iv + 16) = '\0';
+		//*(iv + 16) = '\0';
 		fclose(file);
 	}
+	free(dupla);
 	return iv;
 }
 void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 {
 	//getTransKeyFromFile();
 	byte *iv = getIVFromFile();
+
 	//printf("%d\n", iv);
 	byte *key = getKeyFromFile();
+
 	//printf("%d\n", key);
-	
+
 	int tam = strlen(filepath);
 	char* addString;
-	if (op == 1)	
-		addString = "-cripto";	
+	if (op == 1)
+		addString = "-cripto";
 	if (op == 2)
 		addString = "-decripto";
-	 
+
 	int addStringTam = strlen(addString);
-	char* destFile = (char*)malloc((tam+addStringTam) * sizeof(char));
-	char *codif = (char*)malloc(3 * sizeof(char));
-	strcpy(codif, filepath+(tam-4));
+	char* destFile = (char*)malloc((tam + addStringTam) * sizeof(char));
+	char *codif = (char*)malloc(5 * sizeof(char));
+	strcpy(codif, filepath + (tam - 4));
 	//printf("%s\n", codif);
 	strncpy(destFile, filepath, tam - 4);
 	destFile[tam - 4] = '\0';
@@ -169,23 +175,23 @@ void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 	destFile = concat(destFile, addString);
 	destFile = concat(destFile, codif);
 	printf("\n");
-	printf("%s","Arquivo gerado: ");
+	printf("%s", "Arquivo gerado: ");
 	printf("%s\n\n", destFile);
 	//CRIPTOGRAFAR
 	if (op == 1)
 	{
-		
+
 		//ECB
 		if (mode == 1)
 		{
 			//AES APENAS COM ADDROUNDKEY
 			if (cript == 1)
-		
+
 				process(filepath, destFile, key, rounds, NULL, ECB, encryptAddRoundKey);
 			//AES CONVENCIONAL
 			if (cript == 2)
 				process(filepath, destFile, key, rounds, NULL, ECB, encrypt);
-				//process(filepath, destFile, key, rounds, NULL, ECB,encrypt);
+			//process(filepath, destFile, key, rounds, NULL, ECB,encrypt);
 			//AES MODIFICADO
 			if (cript == 3)
 				process(filepath, destFile, key, rounds, NULL, ECB, encryptAlternative);
@@ -199,7 +205,7 @@ void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 				process(filepath, destFile, key, rounds, iv, CBC, encryptAddRoundKey);
 			//AES CONVENCIONAL
 			if (cript == 2)
-				process(filepath, destFile, key, rounds, iv, CBC,encrypt);
+				process(filepath, destFile, key, rounds, iv, CBC, encrypt);
 			//AES MODIFICADO
 			if (cript == 3)
 				process(filepath, destFile, key, rounds, iv, CBC, encryptAlternative);
@@ -217,7 +223,7 @@ void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 			if (cript == 1)
 				process(filepath, destFile, key, rounds, NULL, ECB, decryptAddRoundKey);
 			if (cript == 2)
-				process(filepath, destFile, key, rounds, NULL, ECB,decrypt);
+				process(filepath, destFile, key, rounds, NULL, ECB, decrypt);
 			if (cript == 3)
 				process(filepath, destFile, key, rounds, NULL, ECB, decryptAlternative);
 
@@ -234,6 +240,11 @@ void executeCipher(int op, int mode, int cript, int rounds, char* filepath)
 
 		}
 	}
+	free(iv);
+	free(key);
+	//	free(addString);
+	free(destFile);
+	free(codif);
 
 }
 
@@ -244,7 +255,7 @@ void interface()
 	int mode = 0;
 	int cripto = 0;
 	int rounds = 0;
-	char *filepath = (char*)malloc(1000*sizeof(char));
+	char *filepath = (char*)malloc(1000 * sizeof(char));
 
 	printf("Digite o número da opção desejada para selecioná-la:\n\n");
 	printf("Escolha a operação:\n");
@@ -254,7 +265,7 @@ void interface()
 	scanf("%d", &op);
 	if (op == 3)
 		exit(0);
-	
+
 
 	printf("Escolha o modo:\n");
 	printf("1: ECB\n");
@@ -296,7 +307,7 @@ void interface()
 
 
 
-	
+
 
 
 	executeCipher(op, mode, cripto, rounds, filepath);
