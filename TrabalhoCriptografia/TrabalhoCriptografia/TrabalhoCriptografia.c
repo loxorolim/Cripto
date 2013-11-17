@@ -248,18 +248,28 @@ void interface()
 	printf("Escolha a operação:\n");
 	printf("1: Criptografar\n");
 	printf("2: Decriptografar\n");
+	printf("3: Sair\n");
 	scanf("%d", &op);
+	if (op == 3)
+		exit(0);
+	
 
 	printf("Escolha o modo:\n");
 	printf("1: ECB\n");
 	printf("2: CBC\n");
+	printf("3: Sair\n");
 	scanf("%d", &mode);
+	if (mode == 3)
+		exit(0);
 
 	printf("Escolha o algoritmo de criptografia:\n");
 	printf("1: AES com apenas AddRoundKey\n");
 	printf("2: AES de 128 bits\n");
 	printf("3: AES modificado\n");
+	printf("4: Sair\n");
 	scanf("%d", &cripto);
+	if (cripto == 4)
+		exit(0);
 
 	printf("Digite o numero de rounds desejado\n");
 
@@ -269,14 +279,23 @@ void interface()
 
 	scanf("%s", filepath);
 
-
 	printf("\nAtenção! A chave e o vetor de inicialização (caso haja) são lidos dos arquivos:\n");
 	printf("\nkey.txt\n");
-	printf("iv.txt\n\n");	
-	printf("Atenção novamente! O algoritmo alternativo criado utiliza duas chaves, a de vigenére e a de transposição que são lidas dos arquivos:\n");
-	printf("\nvigkey.txt\n");
-	printf("transkey.txt\n\n");
-	printf("A chave transkey deve conter 4 caracteres.\n");
+	printf("iv.txt\n");
+
+	if (cripto == 3)
+	{
+		printf("\nAtenção! O algoritmo alternativo criado utiliza duas chaves, a de vigenére e a de transposição que são lidas dos arquivos:\n");
+		printf("\nvigkey.txt\n");
+		printf("transkey.txt\n\n");
+		printf("A chave transkey deve conter 4 caracteres.\n");
+	}
+
+
+
+
+	
+
 
 	executeCipher(op, mode, cripto, rounds, filepath);
 
