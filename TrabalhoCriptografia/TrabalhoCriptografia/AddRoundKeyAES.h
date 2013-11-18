@@ -1,4 +1,4 @@
-
+#ifndef AES_ADDROUND_H
 #define AES_ADDROUND_H
 
 #include "utils.h"
@@ -8,3 +8,5 @@ void decryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, in
 
 void decryptBlockAddRoundKey(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type);
 void encryptBlockAddRoundKey(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type);
+
+#endif

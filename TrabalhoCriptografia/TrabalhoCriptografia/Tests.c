@@ -1,6 +1,7 @@
 #include "Tests.h"
 #include "AES.h"
 #include "AlternativeAES.h"
+#include "AddRoundKeyAES.h"
 #include "Images.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -222,7 +223,7 @@ void alternativeEncryptionTest(){
 		printf("\nBloco %d:\n", i + 1);
 		printMatrix(inputData + i * 16);
 	}
-	encryptAlternative(inputData, dataSize, originalKey, result, 10, CBC, iv, 16);
+	encryptAlternative(inputData, dataSize, originalKey, result, 10, CBC, iv);
 	printf("\nResultado Encriptacao:\n");
 	for (int i = 0; i < dataSize / 16; i++)
 	{
@@ -256,7 +257,7 @@ void alternativeDecryptionTest(){
 		printf("\nBloco %d:\n", i + 1);
 		printMatrix(inputData + i * 16);
 	}
-	decryptAlternative(inputData, dataSize, originalKey, result, 10, CBC, iv, vigKey, transKey);
+	decryptAlternative(inputData, dataSize, originalKey, result, 10, CBC, iv);
 	printf("\nResultado Decriptacao:\n");
 	for (int i = 0; i < dataSize / 16; i++)
 	{

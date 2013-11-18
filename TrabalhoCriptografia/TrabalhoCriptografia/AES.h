@@ -32,7 +32,5 @@ void decryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* re
 void matrixTransposer(byte* data);
 
 float calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize);
-//void byteStuffer(byte * b, int size);
-
 
 #endif

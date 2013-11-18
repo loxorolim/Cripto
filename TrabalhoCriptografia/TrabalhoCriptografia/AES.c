@@ -1,8 +1,8 @@
-#include "AES.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "AES.h"
 #include "aes_tables.h"
 
 byte gmul(byte a, byte b) {
@@ -68,6 +68,7 @@ void mixColumns(byte* val)
 	}
 	memcpy(val, n5, sizeof(unsigned char)* 16);
 }
+
 void inverseMixColumns(byte* val)
 {
 	unsigned char n1 = 0;
@@ -271,6 +272,12 @@ void decryptBlock(byte* data, byte** allKeys, int rounds, byte** toXor, byte* re
 	}	
 }
 
+/*
+Realiza a transposição de uma matriz.
+A implementação deste trabalho seguiu os slides apresentados em aula.
+Porém, implementações do AES existentes na Internet utilizam uma matriz transposta.
+Por isso, os dados são transpostos de forma a obter os mesmos resultados de tais implementações.
+*/
 void matrixTransposer(byte* data)
 {
 	for (int i = 0; i < 4; i++)
@@ -375,19 +382,17 @@ void decrypt(byte * data, int dataSize, byte * key, byte * result, int rounds, i
 	{
 		matrixTransposer(data + i * 16);
 		matrixTransposer(result + i * 16);
-		//printf("\nRESULTADO FINAL EM NOSSO FORMATO\n");
-		//printMatrix(result + i * 16);
 	}
-
-	
 
 	for (int i = 0; i < rounds + 1; i++)
 		free(allKeys[i]);
-
 	
 	free(allKeys);
 }
 
+/*
+Calcula a quantidade de bits ligados num byte.
+*/
 static long calculateOnBits(byte b)
 {
 	long count = 0;
@@ -411,4 +416,3 @@ float calculateHammingDistance(byte * clearM, byte * criptoM, int arraySize)
 	}
 	return dist / (float)(arraySize * 8.0f); //quantidade total de bits = quantidade de bytes * 8
 }
-

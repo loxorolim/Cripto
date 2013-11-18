@@ -1,5 +1,5 @@
 #include "AddRoundKeyAES.h"
-#include <stdio.h>
+#include "AES.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -18,16 +18,10 @@ void encryptBlockAddRoundKey(byte* data, byte** allKeys, int rounds, byte** toXo
 	//demais rounds
 	for (int i = 1; i < rounds; i++)
 	{
-		//		subBytes(result, 16);
-		//		shiftRows(result);
-		//		mixColumns(result);
-
 		addRoundKey(result, 0, allKeys[i]);
 	}
 
 	//Último round
-	//	subBytes(result, 16);
-	//	shiftRows(result);
 	addRoundKey(result, 0, allKeys[rounds]);
 
 	if (type == CBC) // SE CBC
@@ -53,7 +47,6 @@ void encryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, in
 	for (int i = 0; i < dataSize / 16; i++)
 	{
 		matrixTransposer(data + i * 16);
-		//	encryptBlock(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type);
 		encryptBlockAddRoundKey(data + i * 16, allKeys, rounds, &toXor, result + i * 16, type);
 	}
 
@@ -85,6 +78,7 @@ void encryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, in
 
 	free(allKeys);
 }
+
 void decryptBlockAddRoundKey(byte* data, byte** allKeys, int rounds, byte** toXor, byte* result, int type)
 {
 	memcpy(result, data, 16 * sizeof(byte));
@@ -105,6 +99,7 @@ void decryptBlockAddRoundKey(byte* data, byte** allKeys, int rounds, byte** toXo
 		*toXor = data;
 	}
 }
+
 void decryptAddRoundKey(byte * data, int dataSize, byte * key, byte * result, int rounds, int type, byte * iv)
 {
 	matrixTransposer(key);
