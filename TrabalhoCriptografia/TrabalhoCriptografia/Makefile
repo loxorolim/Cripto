@@ -14,8 +14,8 @@ images.o:Images.c
 	gcc -o images.o -c Images.c -std=c99 -I$(DEVIL_INCLUDE_PATH)
 main.o:main.c
 	gcc -o main.o -c main.c -std=c99 -I$(DEVIL_INCLUDE_PATH)
-utils.o:Utils.c
-	gcc -o utils.o -c Utils.c -std=c99
+utils.o:utils.c
+	gcc -o utils.o -c utils.c -std=c99
 AlternativeAES.o:AlternativeAES.c
 	gcc -o AlternativeAES.o -c AlternativeAES.c -std=c99
 AddRoundKeyAES.o:AddRoundKeyAES.c

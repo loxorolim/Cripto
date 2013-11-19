@@ -15,7 +15,6 @@ Descrição: Esse trabalho é uma implementação do algoritmo AES com chave de 128 b
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <conio.h>
 #include <locale.h>
 
 //biblioteca de imagens
