@@ -25,6 +25,6 @@ void process(const char* srcFile, const char* destFile, int bitCount);
 void aplicaDoge(const char* doge, const char* destFile, const char*tree, int bitCount);
 byte doMask(byte b, const char *mask);
 
-char * genMask(char *dest, int count);
-char * genInverseMask(char *dest, int count);
+byte genMask(int count);
+byte genInverseMask(int count);
 #endif

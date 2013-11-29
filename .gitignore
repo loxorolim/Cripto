@@ -24,3 +24,8 @@ TrabalhoCriptografia.vcxproj.user
 /trab_esteganografia/TrabalhoCriptografia/obj
 /trab_esteganografia/TrabalhoCriptografia/Debug
 *.opensdf
+
+*.exe
+*.pdb
+
+*.ilk

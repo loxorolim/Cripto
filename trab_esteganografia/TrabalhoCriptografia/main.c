@@ -289,30 +289,32 @@ int main(int argc, char* argv[])
 	ilOriginFunc(IL_ORIGIN_UPPER_LEFT);
 	setlocale(LC_ALL, "Portuguese");
 
-	
-	/*aplicaDoge("penguins.bmp", "b1.png", "doge.bmp", 1);
+	/*for (int i = 0; i <= 8; i++){
+		printf("%d %d\n", genMask(i), genInverseMask(i));
+	}*/
+	aplicaDoge("doge.bmp", "b1.png", "penguins.bmp", 1);
 	process("b1.png", "c1.png", 1);
 
-	aplicaDoge("penguins.bmp", "b2.png", "doge.bmp", 2);
+	aplicaDoge("doge.bmp", "b2.png", "penguins.bmp", 2);
 	process("b2.png", "c2.png", 2);
 
-	aplicaDoge("penguins.bmp", "b3.png", "doge.bmp", 3);
+	aplicaDoge("doge.bmp", "b3.png", "penguins.bmp", 3);
 	process("b3.png", "c3.png", 3);
 
-	aplicaDoge("penguins.bmp", "b4.png", "doge.bmp", 4);
+	aplicaDoge("doge.bmp", "b4.png", "penguins.bmp", 4);
 	process("b4.png", "c4.png", 4);
 
-	aplicaDoge("penguins.bmp", "b5.png", "doge.bmp", 5);
+	aplicaDoge("doge.bmp", "b5.png", "penguins.bmp", 5);
 	process("b5.png", "c5.png", 5);
 
-	aplicaDoge("penguins.bmp", "b6.png", "doge.bmp", 6);
+	aplicaDoge("doge.bmp", "b6.png", "penguins.bmp", 6);
 	process("b6.png", "c6.png", 6);
 
-	aplicaDoge("penguins.bmp", "b7.png", "doge.bmp", 7);
+	aplicaDoge("doge.bmp", "b7.png", "penguins.bmp", 7);
 	process("b7.png", "c7.png", 7);
 
-	aplicaDoge("penguins.bmp", "b8.png", "doge.bmp", 8);
-	process("b8.png", "c8.png", 7);*/
+	aplicaDoge("doge.bmp", "b8.png", "penguins.bmp", 8);
+	process("b8.png", "c8.png", 8);
 
 	process("a.png", "b.png", 2);
 
