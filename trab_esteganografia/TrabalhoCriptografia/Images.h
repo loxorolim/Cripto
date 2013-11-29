@@ -23,8 +23,15 @@ float getImageHammingDistance(const char* srcFile, const char* destFile);
 
 void process(const char* srcFile, const char* destFile, int bitCount);
 void aplicaDoge(const char* doge, const char* destFile, const char*tree, int bitCount);
-byte doMask(byte b, const char *mask);
 
+
+/*
+para n=2, retorna 00000011
+*/
 byte genMask(int count);
+
+/*
+para n=2, retorna 11111100
+*/
 byte genInverseMask(int count);
 #endif

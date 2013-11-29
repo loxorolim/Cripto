@@ -13,35 +13,19 @@ static void printData(byte* data, int size){
 	printf("\n");
 }
 
-byte normColor(byte original, byte factor){
-	float pctg = factor / 255.0f;
-	float fOriginal = (float)original;
-	byte result = (byte)(fOriginal * pctg);
-	//printf("original %d, factor %d, pctg %f, result %d\n", original, factor, pctg, result);
-	//return result;
-	return factor;
-}
 
 byte normColor2(byte original, int count){
 	float MAXIMUM = (float)(pow(2, count) - 1.0);
 	float pctg = original / MAXIMUM;
 	return (byte)(pctg * 255.0f);
-	/*switch (original){
-	case 0:
-		return 0;
-	case 1:
-		return 85;
-	case 2:
-		return 170;
-	}
-	return 255;*/
 }
 
 byte genInverseMask(int count){
-	byte dest = 0;
+	/*byte dest = 0;
 	for (int i = count; i < 8; i++)
 		dest = dest | (1 << i);
-	return dest;
+	return dest;*/
+	return genMask(count) ^ 0xFF;
 }
 
 byte genMask(int count){
@@ -66,24 +50,16 @@ void process(const char* srcFile, const char* destFile, int bitCount){
 	byte *result = (byte*)calloc(size, sizeof(byte));       //aloca os pixels da imagem resultado
 	ilCopyPixels(0, 0, 0, width, height, 1, IL_RGB, IL_UNSIGNED_BYTE, originalData);    //obtém uma cópia dos pixels originais
 
-	byte temp = genMask(bitCount);
+	byte mask = genMask(bitCount);
 
 	for (int i = 0; i < size; i+=3){
 		byte r = originalData[i];
 		byte g = originalData[i+1];
 		byte b = originalData[i+2];
 
-		//byte oldR = r, oldG = g, oldB = b;
-
-		/*r = doMask(r, "00000011");
-		g = doMask(g, "00000011");
-		b = doMask(b, "00000011");*/
-
-		
-
-		r = r & temp;
-		g = g & temp;
-		b = b & temp;
+		r = r & mask;
+		g = g & mask;
+		b = b & mask;
 
 		result[i] = normColor2(r, bitCount);
 		result[i + 1] = normColor2(g, bitCount);
@@ -156,18 +132,18 @@ void aplicaDoge(const char* doge, const char* destFile, const char*tree, int bit
 		byte gDoge = originalData[i + 1];
 		byte bDoge = originalData[i + 2];
 
-		byte rMost = (rDoge & mask1) >> (8 - bitCount);
+		byte rMost = (rDoge & mask1) >> (8 - bitCount); //pega os (8-n) bits mais significativos e move pra direita
 		byte gMost = (gDoge & mask1) >> (8 - bitCount);
 		byte bMost = (bDoge & mask1) >> (8 - bitCount);
 
 
-		byte rtree = treeData[i] & mask2;
+		byte rtree = treeData[i] & mask2; //pega os n bits mais significativos e deixa onde estão (na esquerda)
 		byte gtree = treeData[i + 1] & mask2;
 		byte btree = treeData[i + 2] & mask2;
 
-		result[i] = rMost | rtree;
-		result[i+1] = gMost | gtree;
-		result[i+2] = bMost | btree;
+		result[i] = rtree | rMost; //junta os n bits da imagem auxiliar com os (8-n) da mensagem
+		result[i + 1] = gtree | gMost;
+		result[i + 2] = btree | bMost;
 	}
 
 
