@@ -21,8 +21,10 @@ byte normColor(byte original, byte factor){
 	return factor;
 }
 
-byte normColor2(byte original){
-	switch (original){
+byte normColor2(byte original, int count){
+	float pctg = original / (count + 1.0f);
+	return (byte)(pctg * 255.0f);
+	/*switch (original){
 	case 0:
 		return 0;
 	case 1:
@@ -30,10 +32,24 @@ byte normColor2(byte original){
 	case 2:
 		return 170;
 	}
-	return 255;
+	return 255;*/
 }
 
-void process(const char* srcFile, const char* destFile, byte *key, int rounds, byte *iv, int type, CryptFunc f){
+char * genInverseMask(char *dest, int count){
+	for (int i = 0; i < 8; i++)
+		dest[i] = (7 - i) < count ? '0' : '1';
+	
+	return dest;
+}
+
+char * genMask(char *dest, int count){
+	for (int i = 0; i < 8; i++)
+		dest[i] = (7 - i) < count ? '1' : '0';
+
+	return dest;
+}
+
+void process(const char* srcFile, const char* destFile, int bitCount){
 	ILuint srcID = ilGenImage();               //gera a imagem de origem
 	ilBindImage(srcID);                        //manda trabalhar com essa imagem
 	ilLoadImage(srcFile);                      //carrega a imagem de origem do arquivo
@@ -48,7 +64,9 @@ void process(const char* srcFile, const char* destFile, byte *key, int rounds, b
 	byte *result = (byte*)calloc(size, sizeof(byte));       //aloca os pixels da imagem resultado
 	ilCopyPixels(0, 0, 0, width, height, 1, IL_RGB, IL_UNSIGNED_BYTE, originalData);    //obtém uma cópia dos pixels originais
 
-
+	char temp[9];
+	temp[8] = '\0';
+	genMask(temp, bitCount);
 
 	for (int i = 0; i < size; i+=3){
 		byte r = originalData[i];
@@ -57,13 +75,19 @@ void process(const char* srcFile, const char* destFile, byte *key, int rounds, b
 
 		byte oldR = r, oldG = g, oldB = b;
 
-		r = doMask(r, "00000011");
-		g = doMask(g, "00000011");;
-		b = doMask(b, "00000011");;
+		/*r = doMask(r, "00000011");
+		g = doMask(g, "00000011");
+		b = doMask(b, "00000011");*/
 
-		result[i] = normColor2(r);
-		result[i + 1] = normColor2(g);
-		result[i + 2] = normColor2(b);
+		
+
+		r = doMask(r, temp);
+		g = doMask(g, temp);
+		b = doMask(b, temp);
+
+		result[i] = normColor2(r, bitCount);
+		result[i + 1] = normColor2(g, bitCount);
+		result[i + 2] = normColor2(b, bitCount);
 	}
 
 
@@ -100,7 +124,7 @@ byte doMask(byte b, const char *mask){
 	return resp;
 }
 
-void aplicaDoge(const char* doge, const char* destFile, const char*tree){
+void aplicaDoge(const char* doge, const char* destFile, const char*tree, int bitCount){
 	ILuint dogeImg = ilGenImage();               //gera a imagem de origem
 	ilBindImage(dogeImg);                        //manda trabalhar com essa imagem
 	ilLoadImage(doge);                      //carrega a imagem de origem do arquivo
@@ -122,20 +146,28 @@ void aplicaDoge(const char* doge, const char* destFile, const char*tree){
 	byte *treeData = (byte*)calloc(size, sizeof(byte)); //aloca espaço para uma cópia dos pixels originais
 	ilCopyPixels(0, 0, 0, width, height, 1, IL_RGB, IL_UNSIGNED_BYTE, treeData);    //obtém uma cópia dos pixels originais
 	
+	char mask1[9];
+	mask1[8] = '\0';
+	genInverseMask(mask1, bitCount);
+
+	char mask2[9];
+	mask2[8] = '\0';
+	genInverseMask(mask2, 8-bitCount);
+
 	int i;
 	for (i = 0; i < size; i += 3){
 		byte rDoge = originalData[i];
 		byte gDoge = originalData[i + 1];
 		byte bDoge = originalData[i + 2];
 
-		byte rMost = doMask(rDoge, "11000000") >> 6;
-		byte gMost = doMask(gDoge, "11000000") >> 6;
-		byte bMost = doMask(bDoge, "11000000") >> 6;
+		byte rMost = doMask(rDoge, mask1) >> (8 - bitCount);
+		byte gMost = doMask(gDoge, mask1) >> (8 - bitCount);
+		byte bMost = doMask(bDoge, mask1) >> (8 - bitCount);
 
 
-		byte rtree = doMask(treeData[i],   "11111100");
-		byte gtree = doMask(treeData[i+1], "11111100");
-		byte btree = doMask(treeData[i+2], "11111100");
+		byte rtree = doMask(treeData[i],   mask2);
+		byte gtree = doMask(treeData[i + 1], mask2);
+		byte btree = doMask(treeData[i + 2], mask2);
 
 		result[i] = rMost | rtree;
 		result[i+1] = gMost | gtree;
