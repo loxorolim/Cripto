@@ -18,3 +18,9 @@
 *.db
 
 TrabalhoCriptografia.vcxproj.user
+/trab_esteganografia/TrabalhoCriptografia/Debug/Trabalho.EBE043B1.tlog/*.tlog
+/trab_esteganografia/TrabalhoCriptografia/Debug/*.obj
+/trab_esteganografia/TrabalhoCriptografia/Debug/*.log
+/trab_esteganografia/TrabalhoCriptografia/obj
+/trab_esteganografia/TrabalhoCriptografia/Debug
+*.opensdf
