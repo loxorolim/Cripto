@@ -18,45 +18,15 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AES.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tests.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Images.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="aes_tables.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AlternativeAES.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AddRoundKeyAES.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AES.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Tests.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Images.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utils.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AlternativeAES.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AddRoundKeyAES.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.c">
