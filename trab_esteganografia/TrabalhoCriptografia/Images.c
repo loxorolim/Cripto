@@ -1,10 +1,13 @@
-#include "AES.h"
-#include "Images.h"
-#include <IL/il.h>
+//Bibliotecas padrão
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
+//Biblioteca de images
+#include <IL/il.h>
+
+//Nossos headers
+#include "Images.h"
 
 byte normalizeColor(byte original, int bitCount){
 	float MAXIMUM = (float)(pow(2, bitCount) - 1.0);
@@ -22,7 +25,8 @@ byte genInverseMask(int count){
 
 byte genMask(int count){
 	byte dest = 0;
-	for (int i = 0; i < count; i++)
+	int i;
+	for (i = 0; i < count; i++)
 		dest = dest | (1 << i);
 	return dest;
 }
@@ -44,7 +48,8 @@ void decrypt(const char* srcFile, const char* destFile, int bitCount){
 
 	byte mask = genMask(bitCount);
 
-	for (int i = 0; i < size; i+=3){
+	int i;
+	for (i = 0; i < size; i+=3){
 		byte r = originalData[i];
 		byte g = originalData[i+1];
 		byte b = originalData[i+2];

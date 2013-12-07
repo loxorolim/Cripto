@@ -29,3 +29,5 @@ TrabalhoCriptografia.vcxproj.user
 *.pdb
 
 *.ilk
+
+/trab_esteganografia/TrabalhoCriptografia/TrabalhoCripto.exe

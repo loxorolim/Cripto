@@ -94,7 +94,8 @@ int main(int argc, char* argv[])
 	char str1[20] = "";
 	char str2[20] = "";
 	system("PAUSE");
-	for (int usedBits = 1; usedBits <= 8; usedBits++){
+	int usedBits;
+	for (usedBits = 1; usedBits <= 8; usedBits++){
 		str1[0] = str2[0] = '\0';
 		sprintf(str1, "b%d.png", usedBits);
 		sprintf(str2, "c%d.png", usedBits);
@@ -105,6 +106,7 @@ int main(int argc, char* argv[])
 
 	decrypt("a.png", "b.png", 2);
 
+	ilShutDown();
 	system("PAUSE");
 	return 0;
 }
