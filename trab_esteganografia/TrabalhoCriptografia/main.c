@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
 		sprintf(str1, "b%d.png", usedBits);
 		sprintf(str2, "c%d.png", usedBits);
 
-		encrypt("doge.bmp", str1, "penguins.bmp", usedBits);
+		encrypt("penguins.bmp", "doge.bmp", str1, usedBits);
 		decrypt(str1, str2, usedBits);
 	}
 

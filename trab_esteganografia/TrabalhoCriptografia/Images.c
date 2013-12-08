@@ -16,19 +16,22 @@ byte normalizeColor(byte original, int bitCount){
 }
 
 byte genInverseMask(int count){
-	/*byte dest = 0;
-	for (int i = count; i < 8; i++)
-		dest = dest | (1 << i);
-	return dest;*/
 	return genMask(count) ^ 0xFF;
 }
 
 byte genMask(int count){
-	byte dest = 0;
-	int i;
-	for (i = 0; i < count; i++)
-		dest = dest | (1 << i);
-	return dest;
+	const byte masks[9] = {
+		0,   //00000000
+		1,   //00000001
+		3,   //00000011
+		7,   //00000111
+		15,  //00001111
+		31,  //00011111
+		63,  //00111111
+		127, //01111111
+		255  //11111111
+	};
+	return masks[count];
 }
 
 void decrypt(const char* srcFile, const char* destFile, int bitCount){
@@ -49,7 +52,7 @@ void decrypt(const char* srcFile, const char* destFile, int bitCount){
 	byte mask = genMask(bitCount);
 
 	int i;
-	for (i = 0; i < size; i+=3){
+	for (i = 0; i < size - 2; i+=3){
 		byte r = originalData[i];
 		byte g = originalData[i+1];
 		byte b = originalData[i+2];
@@ -111,7 +114,7 @@ void encrypt(const char* imageToShow, const char* imageToHide, const char* destI
 	byte mask2 = genInverseMask(bitCount);
 
 	int i;
-	for (i = 0; i < size; i += 3){
+	for (i = 0; i < size - 2; i += 3){
 		byte rDoge = secretData[i];
 		byte gDoge = secretData[i + 1];
 		byte bDoge = secretData[i + 2];
