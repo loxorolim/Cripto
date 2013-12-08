@@ -54,9 +54,9 @@ void interface()
 		int usedBits = 0;
 		int cripto = 0;
 		int rounds = 0;
-		char *coverImage = (char*)malloc(1000 * sizeof(char));
-		char *imageToBeHidden = (char*)malloc(1000 * sizeof(char));
-		char *result = (char*)malloc(1000 * sizeof(char));
+		char coverImage[1000];
+		char imageToBeHidden[1000];
+		char result[1000];
 
 		do{
 			printf("Digite o número da opção desejada para selecioná-la:\n\n");
@@ -70,12 +70,12 @@ void interface()
 			exit(0);
 
 		do{
-			printf("\nDigite o número de bits, entre 1 e 8, a ser substituido na imagem a ser modificada:\n");
+			printf("\nDigite o número de bits, entre 1 e 8, a serem substituídos na imagem a ser modificada:\n");
 			scanf("%d", &usedBits);
 		} while (!(usedBits > 0 && usedBits < 9));
 
 
-		printf("\nPor favor especifique o caminho da imagem a ser modificada.\n");
+		printf("\nPor favor especifique o caminho da imagem a ser modificada. (imagem visível)\n");
 		scanf("%s", coverImage);
 
 		if (op == 1){
