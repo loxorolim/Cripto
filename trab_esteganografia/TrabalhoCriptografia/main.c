@@ -24,64 +24,85 @@ Descrição: Esse trabalho é uma implementação do algoritmo AES com chave de 128 b
 #include "utils.h"
 #include "Images.h"
 
-/*void interface()
+char* concat(char *s1, char *s2)
+{
+	char *result = (char*)malloc(strlen(s1) + strlen(s2) + 1);//+1 for the zero-terminator
+	//in real code you would check for errors in malloc here
+	strcpy(result, s1);
+	strcat(result, s2);
+	return result;
+}
+
+char* createOuputFilePath(char *s1, int tam, char *s2, int addStringTam, int op)
+{
+	char* destFile = (char*)malloc((tam + addStringTam) * sizeof(char));
+	char *codif = (char*)malloc(5 * sizeof(char));
+
+	strcpy(codif, s1 + (tam - 4));
+	strncpy(destFile, s1, tam - 4);
+	destFile[tam - 4] = '\0';
+	destFile = concat(destFile, s2);
+	destFile = concat(destFile, codif);
+	free(codif);
+	return destFile;
+}
+
+void interface()
 {
 	int op = 0;
-	int mode = 0;
+	int usedBits = 0;
 	int cripto = 0;
 	int rounds = 0;
-	char *filepath = (char*)malloc(1000 * sizeof(char));
+	char *coverImage = (char*)malloc(1000 * sizeof(char));
+	char *imageToBeHidden = (char*)malloc(1000 * sizeof(char));
+	char *result = (char*)malloc(1000 * sizeof(char));
 
-	printf("Digite o número da opção desejada para selecioná-la:\n\n");
-	printf("Escolha a operação:\n");
-	printf("1: Criptografar\n");
-	printf("2: Decriptografar\n");
-	printf("3: Sair\n");
-	scanf("%d", &op);
+	do{
+		printf("Digite o número da opção desejada para selecioná-la:\n\n");
+		printf("Escolha a operação:\n");
+		printf("1: Criptografar\n");
+		printf("2: Decriptografar\n");
+		printf("3: Sair\n");
+		scanf("%d", &op);
+	} while (!(op > 0 && op < 4));
 	if (op == 3)
 		exit(0);
 
+	do{
+		printf("Digite o número de bits, entre 1 e 8, a ser substituido na imagem a ser modificada:\n");
+		scanf("%d", &usedBits);
+	} while (!(usedBits > 0 && usedBits < 9));
 
-	printf("Escolha o modo:\n");
-	printf("1: ECB\n");
-	printf("2: CBC\n");
-	printf("3: Sair\n");
-	scanf("%d", &mode);
-	if (mode == 3)
-		exit(0);
 
-	printf("Escolha o algoritmo de criptografia:\n");
-	printf("1: AES com apenas AddRoundKey\n");
-	printf("2: AES de 128 bits\n");
-	printf("3: AES modificado\n");
-	printf("4: Sair\n");
-	scanf("%d", &cripto);
-	if (cripto == 4)
-		exit(0);
+	printf("Por favor especifique o caminho da imagem a ser modificada.\n");
+	scanf("%s", coverImage);
 
-	printf("Digite o numero de rounds desejado\n");
-
-	scanf("%d", &rounds);
-
-	printf("Por favor especifique o caminho da imagem a ser codificada.\n");
-
-	scanf("%s", filepath);
-
-	printf("\nAtenção! A chave e o vetor de inicialização (caso haja) são lidos dos arquivos:\n");
-	printf("\nkey.txt\n");
-	printf("iv.txt\n");
-
-	if (cripto == 3)
-	{
-		printf("\nAtenção! O algoritmo alternativo criado utiliza duas chaves, a de vigenére e a de transposição que são lidas dos arquivos:\n");
-		printf("\nvigkey.txt\n");
-		printf("transkey.txt\n\n");
-		printf("A chave transkey deve conter 4 caracteres.\n");
+	if (op == 1){
+		printf("Por favor especifique o caminho da imagem a ser escondida.\n");
+		scanf("%s", imageToBeHidden);
 	}
+	int tam = strlen(coverImage);
+	
+	char* addString;
+	if (op == 1)
+		addString = "-steganographed";
+	if (op == 2)
+		addString = "-revealed";
+	int addStringTam = strlen(addString);
 
-	executeCipher(op, mode, cripto, rounds, filepath);
+	char* destFile = (char*)malloc((tam + addStringTam) * sizeof(char));
 
-}*/
+	destFile = createOuputFilePath(coverImage, tam, addString, addStringTam, op);
+
+	if (op == 1)
+		encrypt(coverImage, imageToBeHidden, destFile, usedBits);
+	else if (op == 2)
+		decrypt(coverImage, destFile, usedBits);
+
+	printf("\n");
+	printf("%s", "Arquivo gerado: ");
+	printf("%s\n\n", destFile);
+}
 
 int main(int argc, char* argv[])
 {
@@ -91,20 +112,7 @@ int main(int argc, char* argv[])
 	ilOriginFunc(IL_ORIGIN_UPPER_LEFT);
 	setlocale(LC_ALL, "Portuguese");
 
-	char str1[20] = "";
-	char str2[20] = "";
-	system("PAUSE");
-	int usedBits;
-	for (usedBits = 1; usedBits <= 8; usedBits++){
-		str1[0] = str2[0] = '\0';
-		sprintf(str1, "b%d.png", usedBits);
-		sprintf(str2, "c%d.png", usedBits);
-
-		encrypt("penguins.bmp", "doge.bmp", str1, usedBits);
-		decrypt(str1, str2, usedBits);
-	}
-
-	decrypt("a.png", "b.png", 2);
+	interface();
 
 	ilShutDown();
 	system("PAUSE");
