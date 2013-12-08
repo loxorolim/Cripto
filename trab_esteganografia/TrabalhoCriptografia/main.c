@@ -49,59 +49,61 @@ char* createOuputFilePath(char *s1, int tam, char *s2, int addStringTam, int op)
 
 void interface()
 {
-	int op = 0;
-	int usedBits = 0;
-	int cripto = 0;
-	int rounds = 0;
-	char *coverImage = (char*)malloc(1000 * sizeof(char));
-	char *imageToBeHidden = (char*)malloc(1000 * sizeof(char));
-	char *result = (char*)malloc(1000 * sizeof(char));
+	while (1){
+		int op = 0;
+		int usedBits = 0;
+		int cripto = 0;
+		int rounds = 0;
+		char *coverImage = (char*)malloc(1000 * sizeof(char));
+		char *imageToBeHidden = (char*)malloc(1000 * sizeof(char));
+		char *result = (char*)malloc(1000 * sizeof(char));
 
-	do{
-		printf("Digite o número da opção desejada para selecioná-la:\n\n");
-		printf("Escolha a operação:\n");
-		printf("1: Criptografar\n");
-		printf("2: Decriptografar\n");
-		printf("3: Sair\n");
-		scanf("%d", &op);
-	} while (!(op > 0 && op < 4));
-	if (op == 3)
-		exit(0);
+		do{
+			printf("Digite o número da opção desejada para selecioná-la:\n\n");
+			printf("Escolha a operação:\n");
+			printf("1: Esconder Imagem\n");
+			printf("2: Revelar Imagem\n");
+			printf("3: Sair\n");
+			scanf("%d", &op);
+		} while (!(op > 0 && op < 4));
+		if (op == 3)
+			exit(0);
 
-	do{
-		printf("Digite o número de bits, entre 1 e 8, a ser substituido na imagem a ser modificada:\n");
-		scanf("%d", &usedBits);
-	} while (!(usedBits > 0 && usedBits < 9));
+		do{
+			printf("\nDigite o número de bits, entre 1 e 8, a ser substituido na imagem a ser modificada:\n");
+			scanf("%d", &usedBits);
+		} while (!(usedBits > 0 && usedBits < 9));
 
 
-	printf("Por favor especifique o caminho da imagem a ser modificada.\n");
-	scanf("%s", coverImage);
+		printf("\nPor favor especifique o caminho da imagem a ser modificada.\n");
+		scanf("%s", coverImage);
 
-	if (op == 1){
-		printf("Por favor especifique o caminho da imagem a ser escondida.\n");
-		scanf("%s", imageToBeHidden);
+		if (op == 1){
+			printf("\nPor favor especifique o caminho da imagem a ser escondida.\n");
+			scanf("%s", imageToBeHidden);
+		}
+		int tam = strlen(coverImage);
+
+		char* addString;
+		if (op == 1)
+			addString = "-steganographed";
+		if (op == 2)
+			addString = "-revealed";
+		int addStringTam = strlen(addString);
+
+		char* destFile = (char*)malloc((tam + addStringTam) * sizeof(char));
+
+		destFile = createOuputFilePath(coverImage, tam, addString, addStringTam, op);
+
+		if (op == 1)
+			encrypt(coverImage, imageToBeHidden, destFile, usedBits);
+		else if (op == 2)
+			decrypt(coverImage, destFile, usedBits);
+
+		printf("\n");
+		printf("%s", "Arquivo gerado: ");
+		printf("%s\n\n", destFile);
 	}
-	int tam = strlen(coverImage);
-	
-	char* addString;
-	if (op == 1)
-		addString = "-steganographed";
-	if (op == 2)
-		addString = "-revealed";
-	int addStringTam = strlen(addString);
-
-	char* destFile = (char*)malloc((tam + addStringTam) * sizeof(char));
-
-	destFile = createOuputFilePath(coverImage, tam, addString, addStringTam, op);
-
-	if (op == 1)
-		encrypt(coverImage, imageToBeHidden, destFile, usedBits);
-	else if (op == 2)
-		decrypt(coverImage, destFile, usedBits);
-
-	printf("\n");
-	printf("%s", "Arquivo gerado: ");
-	printf("%s\n\n", destFile);
 }
 
 int main(int argc, char* argv[])
