@@ -8,7 +8,7 @@ Alunos:	Carlos Filipe Marques Teixeira Jr.
 		Guilherme Rolim e Souza
 		Mateus Carvalho Azis
 
-Descrição: Esse trabalho é uma implementação do algoritmo AES com chave de 128 bits para codificação de imagens. Possui uma versão alternativa que apenas realiza a operação AddRoundKey e outra versão que utiliza Cifra de Vigenére.
+Descrição: Esse trabalho é uma implementação do algoritmo de criptografia de imagens baseada em Esteganografia. É possível esconder uma imagem em outra usando certa quantidade de bits e também revelar uma imagem escondida.
 */
 
 //includes das bibliotecas padrão
@@ -24,27 +24,20 @@ Descrição: Esse trabalho é uma implementação do algoritmo AES com chave de 128 b
 #include "utils.h"
 #include "Images.h"
 
-char* concat(char *s1, char *s2)
-{
-	char *result = (char*)malloc(strlen(s1) + strlen(s2) + 1);//+1 for the zero-terminator
-	//in real code you would check for errors in malloc here
-	strcpy(result, s1);
-	strcat(result, s2);
-	return result;
-}
+//definição dos modos de uso
+static const int ENCODE = 1;
+static const int DECODE = 2;
+static const int EXIT = 3;
 
-char* createOuputFilePath(char *s1, int tam, char *s2, int addStringTam, int op)
+char* createOuputFilePath(char *dest, const char *originalFile, const char *codingName)
 {
-	char* destFile = (char*)malloc((tam + addStringTam) * sizeof(char));
-	char *codif = (char*)malloc(5 * sizeof(char));
-
-	strcpy(codif, s1 + (tam - 4));
-	strncpy(destFile, s1, tam - 4);
-	destFile[tam - 4] = '\0';
-	destFile = concat(destFile, s2);
-	destFile = concat(destFile, codif);
-	free(codif);
-	return destFile;
+	dest[0] = '\0';
+	int fileLen = strlen(originalFile);
+	const char *extension = originalFile + fileLen - 3;
+	char fileName[100] = "";
+	strncpy(fileName, originalFile, fileLen - 4);
+	sprintf(dest, "%s-%s.%s", fileName, codingName, extension);
+	return dest;
 }
 
 void interface()
@@ -56,7 +49,6 @@ void interface()
 		int rounds = 0;
 		char coverImage[1000];
 		char imageToBeHidden[1000];
-		char result[1000];
 
 		do{
 			printf("Digite o número da opção desejada para selecioná-la:\n\n");
@@ -65,8 +57,9 @@ void interface()
 			printf("2: Revelar Imagem\n");
 			printf("3: Sair\n");
 			scanf("%d", &op);
-		} while (!(op > 0 && op < 4));
-		if (op == 3)
+		} while (!(op >= ENCODE && op <= EXIT));
+
+		if (op == EXIT)
 			exit(0);
 
 		do{
@@ -75,29 +68,21 @@ void interface()
 		} while (!(usedBits > 0 && usedBits < 9));
 
 
-		printf("\nPor favor especifique o caminho da imagem a ser modificada. (imagem visível)\n");
+		printf("\nPor favor especifique o caminho da imagem a ser modificada (imagem visível)\n");
 		scanf("%s", coverImage);
+		int tam = strlen(coverImage);
 
-		if (op == 1){
+		if (op == ENCODE){
 			printf("\nPor favor especifique o caminho da imagem a ser escondida.\n");
 			scanf("%s", imageToBeHidden);
 		}
-		int tam = strlen(coverImage);
+		
+		char destFile[100];
+		createOuputFilePath(destFile, coverImage, op == ENCODE ? "steganographed" : "revealed");
 
-		char* addString;
-		if (op == 1)
-			addString = "-steganographed";
-		if (op == 2)
-			addString = "-revealed";
-		int addStringTam = strlen(addString);
-
-		char* destFile = (char*)malloc((tam + addStringTam) * sizeof(char));
-
-		destFile = createOuputFilePath(coverImage, tam, addString, addStringTam, op);
-
-		if (op == 1)
+		if (op == ENCODE)
 			encrypt(coverImage, imageToBeHidden, destFile, usedBits);
-		else if (op == 2)
+		else if (op == DECODE)
 			decrypt(coverImage, destFile, usedBits);
 
 		printf("\n");
