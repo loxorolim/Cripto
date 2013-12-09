@@ -1,4 +1,4 @@
-//Bibliotecas padrão
+	//Bibliotecas padrão
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>

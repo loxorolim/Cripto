@@ -63,7 +63,7 @@ void interface()
 			exit(0);
 
 		do{
-			printf("\nDigite o número de bits, entre 1 e 8, a serem substituídos na imagem a ser modificada:\n");
+			printf("\nDigite o número de bits, entre 1 e 8 (inclusive), a serem substituídos na imagem a ser modificada:\n");
 			scanf("%d", &usedBits);
 		} while (!(usedBits > 0 && usedBits < 9));
 
