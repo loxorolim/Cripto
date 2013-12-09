@@ -7,8 +7,6 @@
 void encrypt(const char*imageToShow, const char* imageToHide, const char* destImage, int bitCount);
 void decrypt(const char* srcFile, const char* destFile, int bitCount);
 
-
-
 /*
 para n=2, retorna 00000011
 */

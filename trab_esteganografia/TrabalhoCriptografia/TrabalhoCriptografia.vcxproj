@@ -81,10 +81,12 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ImageData.h" />
     <ClInclude Include="Images.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ImageData.c" />
     <ClCompile Include="Images.c" />
     <ClCompile Include="main.c" />
   </ItemGroup>
